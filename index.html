@@ -235,6 +235,35 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
 .boardfoot b{color:#2B78AD;font-size:16px;font-weight:900}
 .tips p{margin:0 0 8px;font-size:13.5px;line-height:1.6}
 .tips p:last-child{margin-bottom:0}
+.boardnow{margin-top:8px;text-align:center;font-size:12.5px;font-weight:900;color:#8A6A1C;background:var(--butter-1);border:1.5px solid #FFE7B4;border-radius:99px;padding:5px 12px;display:inline-block;width:100%}
+.boardnow.wait{color:#5B7C93;background:#F3F9FE;border-color:#DFECF7}
+
+/* ---------- 가족 코멘트 ---------- */
+.cmtcard{position:relative}
+.cmtcard .secthead{margin-bottom:6px}
+.chiprow{display:flex;gap:8px;margin:8px 0 10px}
+.chip{
+  flex:1;min-height:44px;border-radius:15px;border:2px solid #E4EFF9;background:#FBFDFF;
+  font-size:14px;font-weight:900;color:#7B93A8;display:inline-flex;align-items:center;justify-content:center;gap:5px;
+  padding:0 8px;transition:all .16s ease;
+}
+.chip.on{background:linear-gradient(180deg,#EFFAFF,#DFF2FE);border-color:#A9DCF5;color:#2B78AD;box-shadow:0 4px 10px rgba(122,166,198,.16)}
+.chip.mom.on{background:linear-gradient(180deg,#F7F2FF,#EBE3FF);border-color:#CFC2FF;color:#6B54B8;box-shadow:0 4px 10px rgba(150,130,220,.16)}
+.cmtlist{display:flex;flex-direction:column;gap:9px;margin:2px 0 12px;max-height:320px;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:2px}
+.cmtrow{display:flex;align-items:flex-end;gap:6px}
+.cmtrow.mom{flex-direction:row-reverse}
+.bubble{
+  position:relative;max-width:78%;border-radius:20px 20px 20px 7px;padding:9px 12px 8px;
+  background:linear-gradient(180deg,#F1FBFF,#E6F7FF);border:2px solid #D6EEFB;
+  font-size:14.5px;font-weight:700;line-height:1.45;word-break:break-word;color:#3E5264;
+  box-shadow:0 4px 10px rgba(122,166,198,.10);
+}
+.cmtrow.mom .bubble{border-radius:20px 20px 7px 20px;background:linear-gradient(180deg,#F8F3FF,#EFE7FF);border-color:#DED3FF;color:#4A3F6B}
+.bubble .meta{display:block;font-size:10.5px;font-weight:900;color:#8BA0B2;margin-top:3px;letter-spacing:.1px}
+.cmtrow.mom .bubble .meta{color:#9A8FC0}
+.cmtdel{flex:0 0 26px;width:26px;height:26px;border-radius:9px;border:none;background:transparent;color:#C3D2DE;font-size:12px;display:grid;place-items:center;padding:0;margin-bottom:8px}
+.cmtdel:active{background:#E9F4FF;color:#2B78AD}
+.cmtempty{font-size:13.5px;color:var(--sub);margin:2px 2px 4px;line-height:1.5}
 
 /* ---------- 탭바 ---------- */
 .tabbar{
@@ -724,6 +753,27 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
     out.tickets = Math.max(0, Number(s.tickets) || 0);
     out.totalStickers = Math.max(0, Number(s.totalStickers) || 0);
     out.celebrated = (typeof s.celebrated === 'string') ? s.celebrated : '';
+    /* 오늘(하루 1회) 스티커를 받은 날짜와, 그 스티커가 소원권까지 채웠는지 */
+    out.stickerDate = /^\d{4}-\d{2}-\d{2}$/.test(String(s.stickerDate || '')) ? s.stickerDate : '';
+    out.stickerTicket = /^\d{4}-\d{2}-\d{2}$/.test(String(s.stickerTicket || '')) ? s.stickerTicket : '';
+
+    /* 가족 코멘트 (최근 100개만 보관) */
+    out.comments = [];
+    var cm = Array.isArray(s.comments) ? s.comments : [];
+    for (var k = 0; k < cm.length; k++) {
+      var c = cm[k];
+      if (!isObj(c) || typeof c.text !== 'string' || !c.text.trim()) { continue; }
+      var at = Number(c.at);
+      if (!(at > 0)) { at = Date.now(); }
+      out.comments.push({
+        id: (typeof c.id === 'string' && c.id) ? c.id : uid(),
+        author: (c.author === 'mom') ? 'mom' : 'child',
+        text: c.text.trim().slice(0, 80),
+        at: at
+      });
+    }
+    if (out.comments.length > 100) { out.comments = out.comments.slice(out.comments.length - 100); }
+
     out.updatedAt = Math.max(0, Number(s.updatedAt) || 0);
     return out;
   }
@@ -738,7 +788,8 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
       childName: '또르치',
       items: sampleItems(),
       schedule: sc,
-      stickers: 0, tickets: 0, totalStickers: 0, celebrated: ''
+      stickers: 0, tickets: 0, totalStickers: 0, celebrated: '',
+      stickerDate: '', stickerTicket: '', comments: []
     });
   }
 
@@ -758,7 +809,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
   var state = loadState();
   var carriedIn = carryOver(state);
   var cur = 'today';
-  var draft = { text: '', type: '숙제' };
+  var draft = { text: '', type: '숙제', cmt: '', who: 'child' };
   var undoBuf = null;
   var sheetState = { id: null, day: 0 };
   var toastTimer = null;
@@ -855,9 +906,11 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
     el.setAttribute('title', '가족 방 ' + SYNC.room + ' · 눌러서 새로 고침');
   }
 
-  /* 내용이 같은지 비교하기 위한 짧은 서명 (id 는 비교에서 뺀다) */  function stateSig(s) {
+  /* 내용이 같은지 비교하기 위한 짧은 서명 (id 는 비교에서 뺀다) */
+  function stateSig(s) {
     if (!s) { return ''; }
-    var out = [String(s.childName || ''), s.stickers | 0, s.tickets | 0, s.totalStickers | 0, String(s.celebrated || '')];
+    var out = [String(s.childName || ''), s.stickers | 0, s.tickets | 0, s.totalStickers | 0, String(s.celebrated || ''),
+      String(s.stickerDate || ''), String(s.stickerTicket || '')];
     var i;
     for (i = 0; i < s.items.length; i++) {
       var x = s.items[i];
@@ -867,6 +920,11 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
     for (i = 0; i < s.schedule.length; i++) {
       var r = s.schedule[i];
       out.push(r.day + '|' + (r.time || '') + '|' + r.title + '|' + (r.place || ''));
+    }
+    out.push('#');
+    var cs = s.comments || [];
+    for (i = 0; i < cs.length; i++) {
+      out.push(cs[i].author + '|' + cs[i].text + '|' + cs[i].at);
     }
     return out.join('~');
   }
@@ -881,15 +939,15 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
     var caret = null;
     try {
       if (document.activeElement && document.activeElement.id) { focusId = document.activeElement.id; }
-      if (focusId === 'newItem') { caret = document.activeElement.selectionStart; }
+      if (focusId === 'newItem' || focusId === 'newComment') { caret = document.activeElement.selectionStart; }
     } catch (e) { focusId = ''; caret = null; }
     state = next;
     persist();
     render();
     if (cur === 'share') { renderShare(); }
-    if (focusId === 'newItem') {
+    if (focusId === 'newItem' || focusId === 'newComment') {
       try {
-        var el = $('newItem');
+        var el = $(focusId);
         if (el && el.focus) {
           el.focus();
           if (caret != null && el.setSelectionRange) { el.setSelectionRange(caret, caret); }
@@ -1172,6 +1230,43 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
     return html;
   }
 
+  /* ---- 가족 코멘트 ---- */
+  function commentWho(c) { return (c && c.author === 'mom') ? '엄마' : state.childName; }
+  function fmtHM(ms) {
+    var d = new Date(ms);
+    return pad2(d.getHours()) + ':' + pad2(d.getMinutes());
+  }
+  function fmtCommentAt(ms) {
+    var d = new Date(Number(ms) || 0);
+    var k = ymd(d);
+    var t = todayKey();
+    if (k === t) { return fmtHM(ms); }
+    if (dayDiff(t, k) === 1) { return '어제 ' + fmtHM(ms); }
+    return (d.getMonth() + 1) + '/' + d.getDate() + ' ' + fmtHM(ms);
+  }
+  function todaysComments() {
+    var t = todayKey();
+    return state.comments.filter(function (c) { return ymd(new Date(Number(c.at) || 0)) === t; });
+  }
+  function commentListHtml() {
+    var cs = state.comments.slice();
+    cs.sort(function (a, b) { return (a.at || 0) - (b.at || 0); });
+    if (cs.length > 20) { cs = cs.slice(cs.length - 20); }
+    if (!cs.length) {
+      return '<p class="cmtempty">아직 한마디가 없어요. 먼저 인사해 볼까요? 💬</p>';
+    }
+    var html = '';
+    for (var i = 0; i < cs.length; i++) {
+      var c = cs[i];
+      html += '<div class="cmtrow ' + (c.author === 'mom' ? 'mom' : 'kid') + '">' +
+        '<div class="bubble">' + esc(c.text) +
+        '<span class="meta">' + esc(commentWho(c)) + ' · ' + esc(fmtCommentAt(c.at)) + '</span></div>' +
+        '<button class="cmtdel" data-act="delComment" data-id="' + esc(c.id) + '" aria-label="한마디 지우기">✕</button>' +
+        '</div>';
+    }
+    return html;
+  }
+
   function renderToday() {
     var body = $('todayBody');
     if (!body) { return; }
@@ -1195,7 +1290,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
     var praiseT, praiseS;
     if (total === 0) {
       praiseT = '오늘도 시작해 볼까요?';
-      praiseS = '할 일을 적으면 스티커가 하나씩 쌓여요';
+      praiseS = '할 일을 모두 끝내면 칭찬 스티커가 1개 붙어요';
     } else if (left === 0) {
       praiseT = '오늘 숙제 완성! 정말 최고예요';
       praiseS = '아래 스티커 판도 확인해 봐요 ⭐';
@@ -1242,6 +1337,21 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
       '<input id="newItem" type="text" autocomplete="off" enterkeyhint="done" maxlength="80" aria-label="새 항목" placeholder="' +
       (draft.type === '준비물' ? '예) 줄넘기, 물통' : '예) 받아쓰기 3급 2번 쓰기') + '" value="' + esc(draft.text) + '">' +
       '<button class="btn primary addbtn" data-act="add">추가</button>' +
+      '</div></div>';
+
+    /* 가족 코멘트 */
+    var kidName = state.childName;
+    html += '<div class="card cmtcard">' +
+      '<div class="secthead"><h2>💬 오늘의 한마디</h2><span class="cnt">' + state.comments.length + '개</span></div>' +
+      '<p class="hint" style="margin:0 0 4px">' + esc(kidName) + josa(kidName, '이와', '와') + ' 서로 한마디 남겨 보세요 🩵</p>' +
+      '<div class="chiprow">' +
+      '<button class="chip' + (draft.who === 'mom' ? '' : ' on') + '" data-act="cmtWho" data-who="child">👧 ' + esc(kidName) + '</button>' +
+      '<button class="chip mom' + (draft.who === 'mom' ? ' on' : '') + '" data-act="cmtWho" data-who="mom">👩 엄마</button>' +
+      '</div>' +
+      '<div class="cmtlist">' + commentListHtml() + '</div>' +
+      '<div class="addrow">' +
+      '<input id="newComment" type="text" autocomplete="off" enterkeyhint="send" maxlength="80" aria-label="가족 한마디" placeholder="예) 엄마 다 했어요!" value="' + esc(draft.cmt) + '">' +
+      '<button class="btn primary addbtn" data-act="addComment">남기기</button>' +
       '</div></div>';
 
     body.innerHTML = html;
@@ -1293,9 +1403,13 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
       '<div class="boardfoot">' + (state.stickers >= 10
         ? '소원권을 받을 수 있어요!'
         : '다음 소원권까지 <b>' + left + '</b>개') + '</div>' +
+      '<div class="boardnow' + (state.stickerDate === todayKey() ? '' : ' wait') + '">' +
+      (state.stickerDate === todayKey()
+        ? '⭐ 오늘 스티커를 받았어요!'
+        : '오늘 할 일을 모두 끝내면 스티커 1개') + '</div>' +
       '</div>' +
       '<div class="card tips">' +
-      '<p>할 일을 끝내고 <b>스위치를 켜면</b> 스티커가 <b>1개</b> 붙어요.</p>' +
+      '<p>오늘 할 일을 <b>모두 완료하면</b> 칭찬 스티커가 <b>1개</b> 붙어요. (하루에 1개)</p>' +
       '<p>스티커 <b>10개</b>를 모으면 <b>소원권 1장</b>! 엄마한테 보여주고 소원을 말해 보세요 🩵</p>' +
       '<p class="muted">지금까지 모은 스티커 <b>' + state.totalStickers + '</b>개</p>' +
       '</div>';
@@ -1340,6 +1454,15 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
     if (!list.length) {
       L.push('');
       L.push('오늘은 아직 숙제가 없어요.');
+    }
+
+    var cmts = todaysComments();
+    if (cmts.length) {
+      L.push('');
+      L.push('[오늘의 한마디]');
+      for (var ci = 0; ci < cmts.length; ci++) {
+        L.push(commentWho(cmts[ci]) + ': ' + cmts[ci].text);
+      }
     }
 
     L.push('');
@@ -1474,11 +1597,11 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
   }
 
   var PRAISE = [
-    '잘했어요! 엄마가 칭찬 스티커를 붙여줄게요 ⭐',
-    '우와, 하나 끝! 오늘도 멋져요 🩵',
+    '하나 끝! 오늘도 멋져요 🩵',
     '척척 해내는 모습이 멋있어요 🌟',
     '이 정도면 숙제 왕! 👑',
-    '하나 더 가까워졌어요 🩵'
+    '하나 더 가까워졌어요 🩵',
+    '끝까지 하면 칭찬 스티커가 기다려요 ⭐'
   ];
   function praise() { return PRAISE[Math.floor(Math.random() * PRAISE.length)]; }
 
@@ -1486,6 +1609,8 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
   function syncDraft() {
     var el = $('newItem');
     if (el) { draft.text = el.value; }
+    var ce = $('newComment');
+    if (ce) { draft.cmt = ce.value; }
   }
 
   function addItem() {
@@ -1510,15 +1635,38 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
     syncDraft();
     var it = itemById(id);
     if (!it) { return; }
-    var earnedTicket = false;
+    var t = todayKey();
     it.done = !it.done;
 
+    /* 오늘 할 일을 "모두" 끝냈을 때만 스티커 1개 — 하루 1회 */
+    var list = todaysItems();
+    var allDone = list.length > 0;
+    for (var i = 0; i < list.length; i++) { if (!list[i].done) { allDone = false; } }
+
+    var awarded = false, earnedTicket = false, revoked = false;
+
     if (it.done) {
-      state.stickers++;
-      state.totalStickers++;
-      if (state.stickers >= 10) { state.stickers = 0; state.tickets++; earnedTicket = true; }
-    } else {
-      if (state.stickers > 0) { state.stickers--; }
+      if (allDone && state.stickerDate !== t) {
+        awarded = true;
+        state.stickers++;
+        state.totalStickers++;
+        if (state.stickers >= 10) { state.stickers = 0; state.tickets++; earnedTicket = true; }
+        state.stickerDate = t;
+        state.stickerTicket = earnedTicket ? t : '';
+      }
+    } else if (!allDone && state.stickerDate === t) {
+      /* 오늘 받은 스티커를 회수: 100%가 아니면 오늘은 안 받은 것으로 */
+      revoked = true;
+      var hadTicket = (state.stickerTicket === t);
+      state.stickerDate = '';
+      state.stickerTicket = '';
+      if (hadTicket) {
+        /* 소원권이 아직 남아 있을 때만 함께 회수 (이미 쓴 소원권을 다시 만들지 않도록) */
+        if (state.tickets > 0) { state.tickets--; state.stickers = 9; }
+        else if (state.stickers > 0) { state.stickers--; }
+      } else if (state.stickers > 0) {
+        state.stickers--;
+      }
       if (state.totalStickers > 0) { state.totalStickers--; }
     }
 
@@ -1526,13 +1674,9 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
     if (earnedTicket) {
       cards.push({ emoji: '🎟️', title: '소원권 1장 완성!', sub: '스티커 10개를 다 모았어요. 엄마한테 보여주고 소원을 말해 보세요!' });
     }
-
-    var list = todaysItems();
-    var allDone = list.length > 0;
-    for (var i = 0; i < list.length; i++) { if (!list[i].done) { allDone = false; } }
-    if (it.done && allDone && state.celebrated !== todayKey()) {
-      state.celebrated = todayKey();
-      cards.push({ emoji: '🎉', title: '오늘 숙제 끝!', sub: state.childName + josa(state.childName, '이가', '가') + ' 정말 멋졌어요. 내일도 화이팅!' });
+    if (it.done && allDone && state.celebrated !== t) {
+      state.celebrated = t;
+      cards.push({ emoji: '🎉', title: '오늘 숙제 끝!', sub: state.childName + josa(state.childName, '이가', '가') + ' 정말 멋졌어요. 스티커 1개도 받았어요!' });
     }
 
     save();
@@ -1540,8 +1684,14 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
 
     if (cards.length) {
       showCelebration(cards);
-    } else if (it.done) {
+    } else if (awarded) {
       miniStar();
+      toast('오늘 숙제를 모두 끝냈어요! 칭찬 스티커 1개 ⭐');
+    } else if (revoked) {
+      toast('하나가 남아서 오늘 스티커는 쉬어 가요 🌱');
+    } else if (it.done && allDone) {
+      toast('오늘 스티커는 이미 받았어요 ⭐');
+    } else if (it.done) {
       toast(praise());
     } else {
       toast('아직이에요. 다시 해볼까요? 🌱');
@@ -1560,6 +1710,45 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
     save();
     render();
     toast('지웠어요', '되돌리기', 'undo');
+  }
+
+  /* ---- 가족 코멘트 남기기 / 지우기 ---- */
+  function addComment() {
+    syncDraft();
+    var el = $('newComment');
+    var text = String((el ? el.value : draft.cmt) || '').trim();
+    if (!text) {
+      toast('한마디를 적어 주세요 ✏️');
+      if (el && el.focus) { el.focus(); }
+      return;
+    }
+    state.comments.push({
+      id: uid(),
+      author: (draft.who === 'mom') ? 'mom' : 'child',
+      text: text.slice(0, 80),
+      at: Date.now()
+    });
+    if (state.comments.length > 100) { state.comments = state.comments.slice(state.comments.length - 100); }
+    draft.cmt = '';
+    if (el) { el.value = ''; }
+    save();
+    render();
+    var el2 = $('newComment');
+    if (el2 && el2.focus) { el2.focus(); }
+    toast('한마디를 남겼어요 💬');
+  }
+
+  function delComment(id) {
+    var idx = -1;
+    for (var i = 0; i < state.comments.length; i++) {
+      if (state.comments[i].id === id) { idx = i; break; }
+    }
+    if (idx < 0) { return; }
+    undoBuf = { kind: 'cmt', comment: state.comments[idx], index: idx };
+    state.comments.splice(idx, 1);
+    save();
+    render();
+    toast('한마디를 지웠어요', '되돌리기', 'undo');
   }
 
   function restoreLast() {
@@ -1592,6 +1781,9 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
       state.items.splice(at, 0, undoBuf.item);
     } else if (undoBuf.kind === 'sched') {
       state.schedule = undoBuf.prev;
+    } else if (undoBuf.kind === 'cmt') {
+      var cat = Math.min(undoBuf.index, state.comments.length);
+      state.comments.splice(cat, 0, undoBuf.comment);
     } else if (undoBuf.kind === 'import') {
       state = undoBuf.prev;
       carryOver(state);
@@ -1760,6 +1952,8 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
     state.items = sampleItems();
     state.schedule = rows.map(function (r) { return { id: uid(), day: r[0], time: r[1], title: r[2], place: r[3] }; });
     state.celebrated = '';
+    state.stickerDate = '';
+    state.stickerTicket = '';
     save();
     render();
     renderShare();
@@ -1803,6 +1997,14 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
         try { $('newItem').focus(); } catch (e) { }
         break;
       case 'add': addItem(); break;
+      case 'addComment': addComment(); break;
+      case 'delComment': delComment(el.getAttribute('data-id')); break;
+      case 'cmtWho':
+        syncDraft();
+        draft.who = (el.getAttribute('data-who') === 'mom') ? 'mom' : 'child';
+        render();
+        try { $('newComment').focus(); } catch (e) { }
+        break;
       case 'restoreLast': restoreLast(); break;
       case 'useTicket': useTicket(); break;
       case 'addSched': openSheet(null, Number(el.getAttribute('data-day'))); break;
@@ -1842,6 +2044,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
     var t = e.target;
     if (!t || !t.id) { return; }
     if (t.id === 'newItem') { e.preventDefault(); addItem(); }
+    else if (t.id === 'newComment') { e.preventDefault(); addComment(); }
     else if (t.id === 'f-title') { e.preventDefault(); saveSheet(); }
     else if (t.id === 'f-place') { e.preventDefault(); saveSheet(); }
     else if (t.id === 'nameInput') { e.preventDefault(); saveName(); }
@@ -1849,7 +2052,9 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
 
   function onInput(e) {
     var t = e.target;
-    if (t && t.id === 'newItem') { draft.text = t.value; }
+    if (!t) { return; }
+    if (t.id === 'newItem') { draft.text = t.value; }
+    else if (t.id === 'newComment') { draft.cmt = t.value; }
   }
 
   function bind() {
