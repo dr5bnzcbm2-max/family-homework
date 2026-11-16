@@ -855,8 +855,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
     el.setAttribute('title', '가족 방 ' + SYNC.room + ' · 눌러서 새로 고침');
   }
 
-  /* 내용이 같은지 비교하기 위한 짧은 서명 (id 는 비교에서 뺀다) */
-  function stateSig(s) {
+  /* 내용이 같은지 비교하기 위한 짧은 서명 (id 는 비교에서 뺀다) */  function stateSig(s) {
     if (!s) { return ''; }
     var out = [String(s.childName || ''), s.stickers | 0, s.tickets | 0, s.totalStickers | 0, String(s.celebrated || '')];
     var i;
@@ -901,6 +900,24 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
     setSyncStatus('live');
   }
 
+  /* 아직 아무것도 손대지 않은 기본 샘플인지 (이런 데이터가 진짜 데이터를 덮으면 안 된다) */
+  function isPristineSample(s) {
+    if (!s || !s.items || !s.schedule) { return false; }
+    var src = sampleItems();
+    var rows = sampleScheduleRows();
+    if (s.items.length !== src.length || s.schedule.length !== rows.length) { return false; }
+    var i;
+    for (i = 0; i < src.length; i++) {
+      var a = s.items[i];
+      if (a.text !== src[i].text || a.type !== src[i].type || a.done) { return false; }
+    }
+    for (i = 0; i < rows.length; i++) {
+      var r = s.schedule[i];
+      if (r.title !== rows[i][2] || Number(r.day) !== rows[i][0] || String(r.time || '') !== String(rows[i][1] || '')) { return false; }
+    }
+    return true;
+  }
+
   /* 원격 데이터 도착 처리: updatedAt 이 더 새로울 때만 적용 */
   function handleRemote(data, source) {
     if (SYNC.applying) { return; }
@@ -913,6 +930,12 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
     var remoteAt = Math.max(0, Number(incoming.updatedAt) || 0);
     var localAt = Math.max(0, Number(state.updatedAt) || 0);
     if (remoteAt >= localAt) {
+      /* 둘 다 타임스탬프가 없는 첫 연결: 손대지 않은 샘플이 실제 데이터를 덮지 않도록 */
+      if (remoteAt === 0 && localAt === 0 && !isPristineSample(state) && isPristineSample(normalize(incoming))) {
+        SYNC.correctAt = Date.now();
+        queuePush(0);
+        return;
+      }
       if (stateSig(normalize(incoming)) !== stateSig(state)) { applyRemote(incoming); }
     } else if (Date.now() - (SYNC.correctAt || 0) > 5000) {
       /* 원격이 더 오래됐으면 내 최신 내용으로 다시 맞춘다 (연속 전송 방지) */
