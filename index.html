@@ -310,6 +310,20 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
 #toast.show{opacity:1;transform:translate(-50%,0);pointer-events:auto}
 #toast .tbtn{background:rgba(255,255,255,.18);border:none;color:#CFE9FB;font-size:13.5px;font-weight:900;border-radius:12px;padding:8px 11px;min-height:38px}
 
+/* ---------- 동기화 상태 배지 ---------- */
+.syncbadge{
+  display:inline-flex;align-items:center;gap:5px;margin-top:7px;cursor:pointer;
+  font-size:11.5px;font-weight:900;letter-spacing:.1px;color:#5D7E96;
+  background:#EFF7FE;border:1.5px solid #DBEAF6;border-radius:99px;padding:4px 10px;
+  transition:background .2s ease,color .2s ease,border-color .2s ease;
+}
+.syncbadge:active{transform:scale(.97)}
+.syncbadge[data-status="live"]{color:#2E7E68;background:#EAFBF4;border-color:#C4EDDE}
+.syncbadge[data-status="syncing"]{color:#8A6A1C;background:#FFF8E3;border-color:#FFE7B4}
+.syncbadge[data-status="offline"]{color:#7A8FA3;background:#F3F7FA;border-color:#E4EBF2}
+.roomline{margin:2px 2px 9px;font-size:12.5px;font-weight:800;color:var(--sub);line-height:1.5}
+.roomline b{color:#2B78AD}
+
 @media (prefers-reduced-motion: reduce){
   *,*:before,*:after{animation:none !important;transition:none !important}
 }
@@ -432,6 +446,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
       <div>
         <div class="date" id="hdrDate">오늘</div>
         <div class="title">숙제 노트 📘</div>
+        <span class="syncbadge" id="syncBadge" data-act="syncNow" data-status="syncing" role="button" tabindex="0" title="가족 노트 동기화 상태">🔄 동기화 중</span>
       </div>
       <button class="gear" data-act="tab" data-tab="share" aria-label="설정과 공유">⚙️</button>
     </div>
@@ -475,6 +490,20 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
       <h2 class="vtitle">💌 가족과 공유하기</h2>
 
       <div class="card">
+        <div class="secthead"><h2>🩵 가족 실시간 연결</h2></div>
+        <p class="hint" style="margin:0 0 10px">같은 <b>가족 방 코드</b>를 쓰는 폰끼리 숙제·일정·스티커가 바로 함께 바뀌어요. 그대로 두면 가족 방 <b>torchi-family</b>로 자동 연결돼요.</p>
+        <label class="lbl" for="roomInput">가족 방 코드</label>
+        <div class="addrow">
+          <input id="roomInput" type="text" maxlength="40" placeholder="예) torchi-family" autocomplete="off">
+          <button class="btn primary addbtn" data-act="saveRoom">연결</button>
+        </div>
+        <p class="roomline" id="roomStatus">연결하는 중…</p>
+        <div class="row2">
+          <button class="btn ghost" data-act="syncNow">🔄 지금 새로 고침</button>
+        </div>
+      </div>
+
+      <div class="card">
         <div class="secthead"><h2>오늘 · 이번 주 요약</h2></div>
         <textarea id="shareText" class="ta" rows="10" readonly aria-label="공유용 요약"></textarea>
         <div class="row2">
@@ -514,7 +543,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
       <div class="card tips">
         <p class="strong">📱 홈 화면에 앱처럼 추가하기</p>
         <p>Safari로 이 파일을 연 뒤 아래쪽 <b>공유 버튼(⬆️)</b> → <b>홈 화면에 추가</b>를 누르면 아이콘이 생기고, 앱처럼 전체 화면으로 열려요.</p>
-        <p class="muted">인터넷 없이도 동작하고, 입력한 내용은 이 기기에만 저장돼요.</p>
+        <p class="muted">인터넷이 없어도 이 폰에 먼저 저장되고, 연결되면 가족 방과 다시 맞춰져요.</p>
       </div>
     </section>
   </main>
@@ -695,6 +724,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
     out.tickets = Math.max(0, Number(s.tickets) || 0);
     out.totalStickers = Math.max(0, Number(s.totalStickers) || 0);
     out.celebrated = (typeof s.celebrated === 'string') ? s.celebrated : '';
+    out.updatedAt = Math.max(0, Number(s.updatedAt) || 0);
     return out;
   }
 
@@ -746,8 +776,322 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
     return n;
   }
 
-  function save() {
+  /* 로컬에만 저장 (updatedAt 을 건드리지 않음) */
+  function persist() {
     try { store.set(JSON.stringify(state)); } catch (e) { storageOK = false; }
+  }
+
+  /* 사용자가 바꾼 내용: localStorage 저장 + updatedAt 갱신 + Firebase 로 전송 */
+  function save() {
+    var now = Date.now();
+    var prev = Math.max(0, Number(state.updatedAt) || 0);
+    state.updatedAt = Math.max(now, prev + 1);
+    persist();
+    queuePush(150);
+  }
+
+  /* ============ 가족 실시간 동기화 (Firebase Realtime Database · fetch + SSE) ============ */
+  var FB_BASE = 'https://family-homework-4f0ef-default-rtdb.firebaseio.com';
+  var DEFAULT_ROOM = 'torchi-family';
+  var ROOM_KEY = 'familyHomeworkApp.room.v1';
+  var roomFallback = null;
+
+  var SYNC = {
+    room: DEFAULT_ROOM,
+    es: null,
+    status: 'idle',
+    pushTimer: null,
+    pushAt: 0,
+    pullAt: 0,
+    pollTimer: null,
+    reconnectTimer: null,
+    fails: 0,
+    applying: false,
+    correctAt: 0,
+    seedPushed: false
+  };
+
+  function hasFetch() { return typeof fetch === 'function'; }
+  function hasStream() { return typeof EventSource === 'function'; }
+
+  function roomGet() {
+    try { return window.localStorage.getItem(ROOM_KEY); }
+    catch (e) { return roomFallback; }
+  }
+  function roomSet(v) {
+    roomFallback = v;
+    try { window.localStorage.setItem(ROOM_KEY, v); } catch (e) { }
+  }
+  /* Firebase 키에 못 쓰는 문자(. # $ [ ] /, 제어문자)만 지우고 공백은 - 로 */
+  function sanitizeRoom(code) {
+    var s = String(code == null ? '' : code).trim();
+    s = s.replace(/[.#$\[\]\/\u0000-\u001f\u007f]/g, '').replace(/\s+/g, '-').toLowerCase();
+    return s.slice(0, 40);
+  }
+  function detectRoom() {
+    var fromUrl = '';
+    try {
+      if (typeof location !== 'undefined' && location && location.search) {
+        var m = /[?&]room=([^&#]*)/.exec(location.search);
+        if (m) { fromUrl = decodeURIComponent(m[1].replace(/\+/g, ' ')); }
+      }
+    } catch (e) { fromUrl = ''; }
+    var code = sanitizeRoom(fromUrl);
+    if (code) { roomSet(code); return code; }
+    var saved = sanitizeRoom(roomGet() || '');
+    return saved || DEFAULT_ROOM;
+  }
+  function roomUrl() {
+    return FB_BASE + '/families/' + encodeURIComponent(SYNC.room) + '.json';
+  }
+
+  function setSyncStatus(s) {
+    if (s !== 'live' && s !== 'syncing' && s !== 'offline') { s = 'offline'; }
+    SYNC.status = s;
+    var el = $('syncBadge');
+    if (!el) { return; }
+    el.textContent = (s === 'live') ? '🩵 실시간 연결됨' : (s === 'syncing' ? '🔄 동기화 중' : '📴 오프라인');
+    el.setAttribute('data-status', s);
+    el.setAttribute('title', '가족 방 ' + SYNC.room + ' · 눌러서 새로 고침');
+  }
+
+  /* 내용이 같은지 비교하기 위한 짧은 서명 (id 는 비교에서 뺀다) */
+  function stateSig(s) {
+    if (!s) { return ''; }
+    var out = [String(s.childName || ''), s.stickers | 0, s.tickets | 0, s.totalStickers | 0, String(s.celebrated || '')];
+    var i;
+    for (i = 0; i < s.items.length; i++) {
+      var x = s.items[i];
+      out.push(x.text + '|' + x.type + '|' + (x.done ? 1 : 0) + '|' + x.date + '|' + (x.carried ? 1 : 0));
+    }
+    out.push('@');
+    for (i = 0; i < s.schedule.length; i++) {
+      var r = s.schedule[i];
+      out.push(r.day + '|' + (r.time || '') + '|' + r.title + '|' + (r.place || ''));
+    }
+    return out.join('~');
+  }
+
+  /* 다른 폰에서 온 최신 내용을 이 폰에 적용 */
+  function applyRemote(remote) {
+    if (!remote || typeof remote !== 'object') { return; }
+    SYNC.applying = true;
+    var next = normalize(remote);
+    next.updatedAt = Math.max(0, Number(remote.updatedAt) || 0);
+    var focusId = '';
+    var caret = null;
+    try {
+      if (document.activeElement && document.activeElement.id) { focusId = document.activeElement.id; }
+      if (focusId === 'newItem') { caret = document.activeElement.selectionStart; }
+    } catch (e) { focusId = ''; caret = null; }
+    state = next;
+    persist();
+    render();
+    if (cur === 'share') { renderShare(); }
+    if (focusId === 'newItem') {
+      try {
+        var el = $('newItem');
+        if (el && el.focus) {
+          el.focus();
+          if (caret != null && el.setSelectionRange) { el.setSelectionRange(caret, caret); }
+        }
+      } catch (e2) { }
+    }
+    SYNC.applying = false;
+    setSyncStatus('live');
+  }
+
+  /* 원격 데이터 도착 처리: updatedAt 이 더 새로울 때만 적용 */
+  function handleRemote(data, source) {
+    if (SYNC.applying) { return; }
+    var incoming = (data && typeof data === 'object' && !Array.isArray(data)) ? data : null;
+    if (!incoming) {
+      /* 방이 비어 있으면 지금 데이터를 올려 처음 상태 만들기 (같은 방에서 반복 전송하지 않음) */
+      if (!SYNC.seedPushed) { SYNC.seedPushed = true; queuePush(0); }
+      return;
+    }
+    var remoteAt = Math.max(0, Number(incoming.updatedAt) || 0);
+    var localAt = Math.max(0, Number(state.updatedAt) || 0);
+    if (remoteAt >= localAt) {
+      if (stateSig(normalize(incoming)) !== stateSig(state)) { applyRemote(incoming); }
+    } else if (Date.now() - (SYNC.correctAt || 0) > 5000) {
+      /* 원격이 더 오래됐으면 내 최신 내용으로 다시 맞춘다 (연속 전송 방지) */
+      SYNC.correctAt = Date.now();
+      queuePush(0);
+    }
+  }
+
+  function queuePush(delay) {
+    if (!hasFetch()) { return; }
+    if (SYNC.pushTimer) { clearTimeout(SYNC.pushTimer); }
+    var d = (typeof delay === 'number') ? delay : 150;
+    SYNC.pushTimer = setTimeout(function () { SYNC.pushTimer = null; doPush(); }, d);
+  }
+
+  function doPush() {
+    if (!hasFetch()) { return; }
+    var body = JSON.stringify(state);
+    setSyncStatus('syncing');
+    try {
+      fetch(roomUrl(), {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: body,
+        cache: 'no-store'
+      }).then(function (r) {
+        if (!r || !r.ok) { throw new Error('http ' + (r ? r.status : '?')); }
+        SYNC.pushAt = Date.now();
+        SYNC.fails = 0;
+        setSyncStatus('live');
+      }).catch(function () {
+        SYNC.fails++;
+        setSyncStatus('offline');
+      });
+    } catch (e) {
+      SYNC.fails++;
+      setSyncStatus('offline');
+    }
+  }
+
+  function doPull(silent) {
+    if (!hasFetch()) { return; }
+    if (!silent) { setSyncStatus('syncing'); }
+    try {
+      fetch(roomUrl(), { method: 'GET', cache: 'no-store' }).then(function (r) {
+        if (!r || !r.ok) { throw new Error('http ' + (r ? r.status : '?')); }
+        return r.text();
+      }).then(function (txt) {
+        SYNC.pullAt = Date.now();
+        var data = null;
+        try { data = txt ? JSON.parse(txt) : null; } catch (e) { data = null; }
+        handleRemote(data, 'pull');
+        if (SYNC.status !== 'live') { setSyncStatus('live'); }
+      }).catch(function () {
+        SYNC.fails++;
+        if (!silent) { setSyncStatus('offline'); }
+      });
+    } catch (e) {
+      SYNC.fails++;
+      setSyncStatus('offline');
+    }
+  }
+
+  function closeStream() {
+    if (SYNC.reconnectTimer) { clearTimeout(SYNC.reconnectTimer); SYNC.reconnectTimer = null; }
+    if (SYNC.es) {
+      try { SYNC.es.onerror = null; } catch (e) { }
+      try { SYNC.es.close(); } catch (e2) { }
+      SYNC.es = null;
+    }
+  }
+
+  /* SSE: Firebase 는 event: put / patch / keep-alive 로 전체 상태를 보내준다 */
+  function onStream(ev) {
+    var d = null;
+    try { d = JSON.parse(ev && ev.data ? ev.data : 'null'); } catch (e) { return; }
+    if (!d || typeof d !== 'object') { setSyncStatus('live'); return; }
+    var path = (typeof d.path === 'string') ? d.path : '/';
+    if (path !== '/' && path !== '') { doPull(true); return; }
+    var data = Object.prototype.hasOwnProperty.call(d, 'data') ? d.data : null;
+    handleRemote(data, 'sse');
+    if (!SYNC.applying) { setSyncStatus('live'); }
+  }
+
+  function connect() {
+    closeStream();
+    if (!hasStream()) {
+      setSyncStatus(hasFetch() ? 'syncing' : 'offline');
+      return;
+    }
+    try {
+      var es = new EventSource(roomUrl());
+      SYNC.es = es;
+      if (es.addEventListener) {
+        es.addEventListener('open', function () { SYNC.fails = 0; setSyncStatus('live'); });
+        es.addEventListener('put', onStream);
+        es.addEventListener('patch', onStream);
+        es.addEventListener('keep-alive', function () { setSyncStatus('live'); });
+        es.addEventListener('cancel', function () { setSyncStatus('offline'); });
+        es.addEventListener('auth_revoked', function () { setSyncStatus('offline'); });
+      }
+      es.onerror = function () {
+        var closed = (es.readyState === 2);
+        if (!closed) { setSyncStatus('syncing'); return; }
+        SYNC.es = null;
+        SYNC.fails++;
+        setSyncStatus('offline');
+        var wait = Math.min(30000, 1500 * Math.pow(2, Math.min(4, SYNC.fails)));
+        if (SYNC.reconnectTimer) { clearTimeout(SYNC.reconnectTimer); }
+        SYNC.reconnectTimer = setTimeout(function () { SYNC.reconnectTimer = null; connect(); }, wait);
+      };
+    } catch (e) {
+      setSyncStatus('offline');
+    }
+  }
+
+  /* 보조 폴링: SSE 가 쉬는 동안에도 몇 초 안에 맞춰지도록 */
+  function startPolling() {
+    if (typeof setInterval !== 'function') { return; }
+    if (SYNC.pollTimer) { return; }
+    SYNC.pollTimer = setInterval(function () {
+      try {
+        if (typeof document !== 'undefined' && document && document.visibilityState === 'hidden') { return; }
+      } catch (e) { }
+      var open = !!(SYNC.es && SYNC.es.readyState === 1);
+      var gap = Date.now() - (SYNC.pullAt || 0);
+      if (open && gap < 25000) { return; }
+      if (!open && gap < 4000) { return; }
+      doPull(open);
+    }, 5000);
+  }
+
+  /* iOS Safari: 백그라운드에서 돌아오면 즉시 다시 맞춘다 */
+  function resumeSync() {
+    try {
+      if (typeof document !== 'undefined' && document && document.visibilityState === 'hidden') { return; }
+    } catch (e) { }
+    if (!hasFetch()) { return; }
+    if (!SYNC.es) { connect(); }
+    doPull(false);
+  }
+
+  function startSync() {
+    SYNC.room = detectRoom();
+    SYNC.seedPushed = false;
+    if (!hasFetch()) { setSyncStatus('offline'); return; }
+    setSyncStatus('syncing');
+    doPull(false);
+    connect();
+    startPolling();
+  }
+
+  function syncNow() {
+    if (!hasFetch()) { setSyncStatus('offline'); toast('지금은 연결할 수 없어요. 이 폰에만 저장돼요'); return; }
+    doPull(false);
+    if (!SYNC.es) { connect(); }
+    toast('가족 노트를 새로 고쳐 오는 중이에요 🔄');
+  }
+
+  function saveRoom() {
+    var el = $('roomInput');
+    var code = sanitizeRoom(el ? el.value : '');
+    if (!code) {
+      code = DEFAULT_ROOM;
+      if (el) { el.value = code; }
+      toast('방 코드가 비어 있어 기본 방으로 연결했어요');
+    }
+    var same = (code === SYNC.room);
+    SYNC.room = code;
+    roomSet(code);
+    SYNC.pushAt = 0;
+    SYNC.pullAt = 0;
+    SYNC.seedPushed = false;
+    SYNC.correctAt = 0;
+    closeStream();
+    setSyncStatus(hasFetch() ? 'syncing' : 'offline');
+    if (hasFetch()) { doPull(false); connect(); startPolling(); }
+    renderShare();
+    toast(same ? ('가족 방 "' + code + '"에 다시 연결했어요 🩵') : ('가족 방 "' + code + '"로 연결했어요 🩵'));
   }
 
   /* ================= 조회 도우미 ================= */
@@ -999,6 +1343,20 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
     var ta = $('shareText'), nm = $('nameInput');
     if (ta) { ta.value = buildShareText(); }
     if (nm) { nm.value = state.childName; }
+    var ri = $('roomInput');
+    if (ri) { ri.value = SYNC.room; }
+    var rs = $('roomStatus');
+    if (rs) {
+      var line;
+      if (SYNC.status === 'live') {
+        line = '🩵 가족 방 <b>' + esc(SYNC.room) + '</b>에 실시간으로 연결돼 있어요. 다른 폰에서 바꾸면 1~2초 안에 여기에도 나타나요.';
+      } else if (SYNC.status === 'syncing') {
+        line = '🔄 가족 방 <b>' + esc(SYNC.room) + '</b>와 맞추는 중이에요…';
+      } else {
+        line = '📴 지금은 오프라인이라 이 폰에만 저장돼요. 연결되면 가족 방 <b>' + esc(SYNC.room) + '</b>과 자동으로 다시 맞춰져요.';
+      }
+      rs.innerHTML = line;
+    }
   }
 
   function render() {
@@ -1437,6 +1795,8 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
       case 'pickFile': if ($('fileIn')) { $('fileIn').click(); } break;
       case 'importPaste': if ($('jsonBox')) { importFromText($('jsonBox').value); } break;
       case 'saveName': saveName(); break;
+      case 'syncNow': syncNow(); break;
+      case 'saveRoom': saveRoom(); break;
       case 'loadSample': loadSampleData(); break;
       case 'resetAll': resetAll(); break;
     }
@@ -1498,8 +1858,14 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
     }
     if (window.addEventListener) {
       window.addEventListener('beforeunload', function () {
-        try { store.set(JSON.stringify(state)); } catch (e) { }
+        persist();
       });
+      window.addEventListener('focus', resumeSync);
+      window.addEventListener('online', function () { if (hasFetch()) { setSyncStatus('syncing'); doPull(false); if (!SYNC.es) { connect(); } } });
+      window.addEventListener('offline', function () { setSyncStatus('offline'); });
+    }
+    if (document.addEventListener) {
+      document.addEventListener('visibilitychange', resumeSync);
     }
   }
 
@@ -1508,7 +1874,8 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
     bind();
     render();
     setTab('today');
-    save();
+    persist();
+    startSync();
     if (carriedIn > 0) {
       setTimeout(function () { toast('어제 못 끝낸 숙제 ' + carriedIn + '개를 오늘로 가져왔어요 🎒'); }, 700);
     }
