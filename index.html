@@ -937,6 +937,15 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
     body.innerHTML = html;
   }
 
+  /* 받침 유무에 맞는 조사: withJong(받침 있을 때), withoutJong */
+  function josa(name, withJong, withoutJong) {
+    var n = String(name || '');
+    if (!n) { return withoutJong; }
+    var c = n.charCodeAt(n.length - 1);
+    if (c < 0xAC00 || c > 0xD7A3) { return withoutJong; }
+    return ((c - 0xAC00) % 28) ? withJong : withoutJong;
+  }
+
   function buildShareText() {
     var d = new Date();
     var list = todaysItems();
@@ -944,7 +953,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
     for (var i = 0; i < list.length; i++) { if (list[i].done) { done++; } }
     var pc = list.length ? Math.round(done / list.length * 100) : 0;
     var L = [];
-    L.push('📚 ' + state.childName + '이의 숙제 노트 · ' + fmtLong(d));
+    L.push('📚 ' + state.childName + josa(state.childName, '이의', '의') + ' 숙제 노트 · ' + fmtLong(d));
     L.push('달성률 ' + pc + '% (' + done + '/' + list.length + ')');
 
     var hw = list.filter(function (x) { return x.type !== '준비물'; });
@@ -1141,7 +1150,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
     for (var i = 0; i < list.length; i++) { if (!list[i].done) { allDone = false; } }
     if (it.done && allDone && state.celebrated !== todayKey()) {
       state.celebrated = todayKey();
-      cards.push({ emoji: '🎉', title: '오늘 숙제 끝!', sub: state.childName + '이 정말 멋졌어요. 내일도 화이팅!' });
+      cards.push({ emoji: '🎉', title: '오늘 숙제 끝!', sub: state.childName + josa(state.childName, '이가', '가') + ' 정말 멋졌어요. 내일도 화이팅!' });
     }
 
     save();
@@ -1360,7 +1369,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
     save();
     render();
     renderShare();
-    toast(state.childName + '이의 노트로 바꿨어요 ✨');
+    toast(state.childName + josa(state.childName, '이의', '의') + ' 노트로 바꿨어요 ✨');
   }
 
   function loadSampleData() {
