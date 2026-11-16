@@ -79,19 +79,23 @@ button{font-family:inherit;color:inherit}
   background:rgba(255,255,255,.55);
 }
 .hero-cloud{position:absolute;right:-8px;bottom:-10px;width:210px;opacity:.85}
-.hero-text{position:relative;padding-right:124px}
+.hero-text{position:relative;padding-right:144px}
 .hi{font-size:13px;font-weight:800;color:#8BA0B2}
 .hname{display:flex;align-items:center;gap:6px;margin-top:2px}
 .hname b{font-size:22px;font-weight:900;letter-spacing:-.4px;color:#2B78AD}
 .hmark{font-size:15px}
 .hsub{margin-top:5px;font-size:12.5px;font-weight:700;color:#8FA4B5}
-.pets{position:absolute;right:8px;bottom:6px;display:flex;align-items:flex-end}
+.pets{position:absolute;right:4px;bottom:2px;display:flex;align-items:flex-end}
 .pet{display:block;filter:drop-shadow(0 5px 8px rgba(122,166,198,.16))}
-.pets .pet{width:54px;height:54px}
-.pets .p-cat{transform:rotate(-7deg) translateY(2px);position:relative;z-index:2}
-.pets .p-bear{width:64px;height:64px;transform:translateY(0);position:relative;z-index:3;margin-left:-6px}
-.pets .p-rabbit{transform:rotate(6deg) translateY(2px);position:relative;z-index:1;margin-left:-8px}
+.pets .pet{width:38px;height:38px}
+.pets .p-cat{transform:rotate(-7deg) translateY(1px) translateX(9px);position:relative;z-index:2}
+.pets .p-rabbit{transform:rotate(6deg) translateY(1px) translateX(-7px);position:relative;z-index:1;margin-left:-14px}
 .pet.bounce{animation:bounce 1.5s ease-in-out infinite}
+.mychar{border:none;background:transparent;padding:0;width:100px;height:100px;flex:0 0 100px;margin-left:-6px;position:relative;z-index:3;display:block}
+.mychar:active{transform:scale(.96)}
+.herochar{display:block;width:100%;height:100%}
+.herochar svg{display:block;width:100%;height:100%;animation:floaty 3.4s ease-in-out infinite}
+@keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
 
 /* ---------- 공통 ---------- */
 .view{display:flex;flex-direction:column;gap:12px;animation:fadeUp .28s ease}
@@ -353,6 +357,105 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
 .roomline{margin:2px 2px 9px;font-size:12.5px;font-weight:800;color:var(--sub);line-height:1.5}
 .roomline b{color:#2B78AD}
 
+/* ---------- 내 방 · 포인트 ---------- */
+.roomcard{padding:12px 12px 13px;background:linear-gradient(170deg,#FBFEFF,#F1F9FF);overflow:hidden}
+.roomtop{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 2px 9px}
+.roompts{display:inline-flex;align-items:center;gap:5px;background:#FFF8E3;border:2px solid #FFE7B4;border-radius:99px;padding:4px 12px;font-size:13px;font-weight:900;color:#8E6622}
+.roompts b{font-size:17px;letter-spacing:-.3px}
+.roompts .pt-unit{font-size:11px;font-weight:900;opacity:.75}
+.roomacts{display:flex;gap:6px}
+.minibtn{min-height:38px;border-radius:14px;border:2px solid #DFECF7;background:#fff;color:#3E7FA8;font-size:12.5px;font-weight:900;padding:0 11px;display:inline-flex;align-items:center;gap:4px;box-shadow:0 4px 10px rgba(122,166,198,.12)}
+.minibtn:active{transform:scale(.96)}
+.minibtn.game{border-color:#CFC2FF;color:#6B54B8;background:#F8F4FF}
+.roomstage-btn{display:block;width:100%;padding:0;border:none;background:transparent}
+.roomstage{width:100%;border-radius:20px;overflow:hidden;border:2px solid #DCEEFB;background:#EAF7FF;box-shadow:inset 0 0 0 2px #fff}
+.roomstage svg{display:block;width:100%;height:auto}
+.roomstage-btn:active .roomstage{transform:scale(.995)}
+.roomhint{margin:9px 2px 0;font-size:12.5px;font-weight:800;color:var(--sub);line-height:1.5}
+.roomhint b{color:#2B78AD}
+
+/* ---------- 꾸미기 시트 ---------- */
+.decohead{display:flex;align-items:center;gap:8px;margin:0 0 11px}
+.decohead h3{font-size:17px;font-weight:900;margin:0;flex:1}
+.decomoney{font-size:12.5px;font-weight:900;color:#8E6622;background:#FFF8E3;border:2px solid #FFE7B4;border-radius:99px;padding:3px 10px;white-space:nowrap}
+.cs-x{flex:0 0 36px;width:36px;height:36px;border-radius:12px;border:2px solid #E4EFF9;background:#fff;color:#93AABC;font-size:14px;display:grid;place-items:center;padding:0}
+.decomode{display:flex;gap:6px;background:#EDF6FD;border-radius:16px;padding:4px;margin-bottom:10px}
+.modebtn{flex:1;min-height:42px;border:none;border-radius:12px;background:transparent;font-size:14px;font-weight:900;color:#7B93A8}
+.modebtn.on{background:#fff;color:#2B78AD;box-shadow:0 4px 10px rgba(122,166,198,.18)}
+.decostage{border-radius:20px;overflow:hidden;border:2px solid #DCEEFB;background:linear-gradient(160deg,#F7FCFF,#EEF8FF);padding:6px;margin-bottom:10px;text-align:center}
+.decostage svg{display:block;width:100%;height:auto;max-height:180px;margin:0 auto}
+.decostage.charmode svg{width:auto;height:146px;max-height:146px}
+.decocats{display:flex;gap:5px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding:2px 2px 8px;margin:0 -2px}
+.catbtn{flex:0 0 auto;min-height:40px;border-radius:13px;border:2px solid #E4EFF9;background:#FBFDFF;color:#7B93A8;font-size:12.5px;font-weight:900;padding:0 11px}
+.catbtn.on{background:#EFFAFF;border-color:#A9DCF5;color:#2B78AD}
+.decogrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+.decoopt{position:relative;border:2px solid #E4EFF9;background:#FBFDFF;border-radius:16px;padding:8px 5px 6px;display:flex;flex-direction:column;align-items:center;gap:3px;min-height:104px}
+.decoopt:active{transform:scale(.97)}
+.decoopt.on{border-color:#7CC6EE;background:#F0FAFF;box-shadow:0 6px 14px rgba(120,190,235,.18)}
+.decoprev{width:100%;height:58px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.decoprev svg{max-width:100%;max-height:100%;width:auto;height:100%}
+.decolbl{font-size:11.5px;font-weight:900;color:#5B7C93;line-height:1.25;text-align:center}
+.decoopt.on .decolbl{color:#2B78AD}
+.cscoin{position:absolute;top:4px;right:4px;font-size:9.5px;font-weight:900;color:#8E6622;background:#FFF3D4;border:1.5px solid #FFE7B4;border-radius:99px;padding:1px 5px}
+.decobuy{background:#FFF9EC;border:2px solid #FFE7B4;border-radius:16px;padding:10px 12px;margin-bottom:10px}
+.buyline{font-size:13px;font-weight:800;color:#7A5E20;line-height:1.5}
+.buyline b{color:#B07C13}
+.buynow{display:inline-block;font-size:11.5px;color:#9A8A6A;margin-left:3px}
+.buyacts{display:flex;gap:6px;margin-top:8px}
+.buyacts .btn{flex:1;min-height:42px;font-size:14px}
+.decoactions{display:flex;gap:8px}
+.decoactions .btn{flex:1;font-size:14px;min-height:48px}
+
+/* ---------- 미니게임 ---------- */
+.gamehead{display:flex;align-items:center;gap:8px;margin:0 0 10px}
+.gamehead h3{font-size:17px;font-weight:900;margin:0;flex:1}
+.gametop{display:flex;align-items:center;gap:7px;margin-bottom:10px}
+.gback{min-height:34px;border-radius:11px;border:2px solid #E4EFF9;background:#fff;color:#7B93A8;font-size:12px;font-weight:900;padding:0 9px}
+.gtimer{font-size:12.5px;font-weight:900;color:#fff;background:linear-gradient(180deg,#4FA9DC,#2C80B8);border-radius:99px;padding:4px 11px}
+.gscore{font-size:12.5px;font-weight:900;color:#2B78AD;background:#EFF8FE;border:1.5px solid #DDEEFB;border-radius:99px;padding:4px 11px}
+.gbest{font-size:11.5px;font-weight:900;color:#8E6622;background:#FFF8E3;border:1.5px solid #FFE7B4;border-radius:99px;padding:4px 10px;margin-left:auto;white-space:nowrap}
+.gamemenu{display:flex;flex-direction:column;gap:10px}
+.gcard{display:flex;align-items:center;gap:12px;text-align:left;border:2px solid #E1EFFA;background:linear-gradient(160deg,#FBFEFF,#F1F9FF);border-radius:22px;padding:14px 14px;min-height:88px}
+.gcard:active{transform:scale(.985)}
+.gcard .gicon{flex:0 0 52px;width:52px;height:52px;border-radius:18px;display:grid;place-items:center;font-size:26px;background:#fff;border:2px solid #DCEEFB;box-shadow:0 6px 14px rgba(122,166,198,.14)}
+.gcard.bal .gicon{background:#FFF6FA;border-color:#FBDCEA}
+.gcard .gtxt{flex:1;min-width:0}
+.gcard .gtitle{font-size:15.5px;font-weight:900;color:#2B78AD;letter-spacing:-.2px}
+.gcard.bal .gtitle{color:#C0567E}
+.gcard .gsub{font-size:12px;font-weight:800;color:var(--sub);margin-top:3px;line-height:1.45}
+.gcard .garrow{color:#B7CCDB;font-size:18px;font-weight:900}
+.quizbox{text-align:center;background:linear-gradient(165deg,#F7FCFF,#EEF8FF);border:2px solid #DCEEFB;border-radius:24px;padding:14px 12px 12px;margin-bottom:10px}
+.qprog{font-size:11.5px;font-weight:900;color:#8BA0B2;letter-spacing:.3px}
+.qemoji{font-size:52px;line-height:1.1;margin:4px 0 2px}
+.qkr{font-size:21px;font-weight:900;color:#2B78AD;letter-spacing:-.4px}
+.qhint{font-size:12px;font-weight:800;color:var(--sub);margin-top:3px}
+.qspk{margin-top:8px;min-height:36px;border-radius:12px;border:2px solid #CFE9FB;background:#fff;color:#2B78AD;font-size:12.5px;font-weight:900;padding:0 12px}
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.choice{min-height:58px;border-radius:18px;border:2px solid #DFECF7;background:#fff;color:#3E5264;font-size:16px;font-weight:900;letter-spacing:.2px;padding:0 8px;box-shadow:0 4px 10px rgba(122,166,198,.10)}
+.choice:active{transform:scale(.97)}
+.choice.right{border-color:#8FD8BC;background:#EDFBF4;color:#21795B}
+.choice.wrong{border-color:#FFC9D0;background:#FFF0F2;color:#C0566B}
+.quizfoot{text-align:center;font-size:13.5px;font-weight:900;color:var(--sub);min-height:20px;margin-bottom:8px}
+.balq{text-align:center;background:linear-gradient(165deg,#FFF9FC,#F7F2FF);border:2px solid #F4DCEB;border-radius:24px;padding:14px 12px;margin-bottom:10px}
+.balq .balnum{font-size:11.5px;font-weight:900;color:#B08AA0;letter-spacing:.3px}
+.balq .baltxt{font-size:16.5px;font-weight:900;color:#8A4E6C;line-height:1.45;margin-top:5px;letter-spacing:-.3px}
+.balbtns{display:flex;flex-direction:column;gap:8px;margin-bottom:10px}
+.balbtn{display:flex;align-items:center;gap:10px;text-align:left;min-height:66px;border-radius:20px;border:2px solid #E4EFF9;background:#fff;padding:10px 12px;box-shadow:0 5px 12px rgba(122,166,198,.10)}
+.balbtn:active{transform:scale(.98)}
+.balbtn.picked{border-color:#FFB3CE;background:#FFF6FA;box-shadow:0 8px 18px rgba(240,150,185,.22)}
+.balbtn .bale{flex:0 0 42px;width:42px;height:42px;border-radius:14px;display:grid;place-items:center;font-size:24px;background:#F4FAFF;border:2px solid #E4EFF9}
+.balbtn.picked .bale{background:#FFF;border-color:#FBD3E0}
+.balbtn .balv{font-size:14.5px;font-weight:900;color:#3E5264;line-height:1.35}
+.balbtn .balab{flex:0 0 auto;font-size:11px;font-weight:900;color:#9DB3C4;margin-left:auto}
+.balrec{font-size:12.5px;font-weight:800;color:var(--sub);background:#FBFDFF;border:2px solid #E8F1F9;border-radius:16px;padding:9px 11px;margin-bottom:10px;line-height:1.55}
+.balrec b{color:#C0567E}
+.balrec ul{margin:4px 0 0;padding-left:16px}
+.balrec li{margin:1px 0}
+.qdone{text-align:center;background:linear-gradient(170deg,#F4FBFF,#EFF8FF);border:2px solid #DCEEFB;border-radius:22px;padding:16px 12px;margin-bottom:10px}
+.qdone .qde{font-size:32px}
+.qdone .qdt{font-size:17px;font-weight:900;color:#2B78AD;margin-top:4px}
+.qdone .qds{font-size:13px;font-weight:800;color:var(--sub);margin-top:4px;line-height:1.5}
+.qdone .qdp{margin-top:8px;font-size:13px;font-weight:900;color:#8E6622;background:#FFF8E3;border:1.5px solid #FFE7B4;border-radius:99px;padding:5px 11px;display:inline-block}
 @media (prefers-reduced-motion: reduce){
   *,*:before,*:after{animation:none !important;transition:none !important}
 }
@@ -364,9 +467,9 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
   .del{flex:0 0 28px;width:28px;height:28px}
   .slots{gap:7px}
   .slot{font-size:22px}
-  .hero-text{padding-right:108px}
-  .pets .pet{width:46px;height:46px}
-  .pets .p-bear{width:56px;height:56px}
+  .hero-text{padding-right:126px}
+  .pets .pet{width:32px;height:32px}
+  .mychar{width:88px;height:88px;flex:0 0 88px;margin-left:-4px}
   .praise-pet{width:46px;height:46px;flex-basis:46px}
 }
 </style>
@@ -487,10 +590,12 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
         <div class="hname"><b id="hdrName"></b><span class="hmark">🩵</span></div>
         <div class="hsub">오늘도 하나씩, 같이 해보자!</div>
       </div>
-      <div class="pets" aria-hidden="true">
-        <svg class="pet p-cat" viewBox="0 0 120 120"><use href="#ch-cat" xlink:href="#ch-cat"/></svg>
-        <svg class="pet p-bear" viewBox="0 0 120 120"><use href="#ch-bear" xlink:href="#ch-bear"/></svg>
-        <svg class="pet p-rabbit" viewBox="0 0 120 120"><use href="#ch-rabbit" xlink:href="#ch-rabbit"/></svg>
+      <div class="pets">
+        <svg class="pet p-cat" viewBox="0 0 120 120" aria-hidden="true"><use href="#ch-cat" xlink:href="#ch-cat"/></svg>
+        <button class="mychar" data-act="openDeco" aria-label="내 캐릭터 꾸미기">
+          <span id="heroChar" class="herochar"></span>
+        </button>
+        <svg class="pet p-rabbit" viewBox="0 0 120 120" aria-hidden="true"><use href="#ch-rabbit" xlink:href="#ch-rabbit"/></svg>
       </div>
     </div>
   </header>
@@ -498,6 +603,19 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
   <main>
     <!-- 오늘 -->
     <section id="view-today" class="view">
+      <div class="card roomcard">
+        <div class="roomtop">
+          <div class="roompts" aria-label="보유 포인트">💰 <b id="ptNum">0</b><span class="pt-unit">P</span></div>
+          <div class="roomacts">
+            <button class="minibtn" data-act="openDeco">🎀 꾸미기</button>
+            <button class="minibtn game" data-act="openGame">🎮 미니게임</button>
+          </div>
+        </div>
+        <button class="roomstage-btn" data-act="openDeco" aria-label="내 방 꾸미기">
+          <div id="roomStage" class="roomstage"></div>
+        </button>
+        <div class="roomhint" id="roomHint"></div>
+      </div>
       <div id="todayBody"></div>
     </section>
 
@@ -622,6 +740,41 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
   </div>
 </div>
 
+<!-- 꾸미기 시트 (캐릭터 · 내 방 · 상점) -->
+<div class="sheet" id="decoSheet" aria-hidden="true">
+  <div class="sheet-back" data-act="decoClose"></div>
+  <div class="sheet-in" role="dialog" aria-modal="true" aria-labelledby="decoTitle">
+    <div class="grab"></div>
+    <div class="decohead">
+      <h3 id="decoTitle">🎀 꾸미기</h3>
+      <div class="decomoney" id="decoMoney">💰 0 P</div>
+      <button class="cs-x" data-act="decoClose" aria-label="닫기">✕</button>
+    </div>
+    <div class="decomode" id="decoMode"></div>
+    <div class="decostage" id="decoStage"></div>
+    <div class="decocats" id="decoCats"></div>
+    <div class="decogrid" id="decoGrid"></div>
+    <div class="decobuy" id="decoBuy" hidden></div>
+    <div class="decoactions">
+      <button class="btn ghost" data-act="decoReset">처음 모습으로</button>
+      <button class="btn primary" data-act="decoClose">다 됐어! 🩵</button>
+    </div>
+  </div>
+</div>
+
+<!-- 미니게임 시트 -->
+<div class="sheet" id="gameSheet" aria-hidden="true">
+  <div class="sheet-back" data-act="gameClose"></div>
+  <div class="sheet-in" role="dialog" aria-modal="true" aria-labelledby="gameTitle">
+    <div class="grab"></div>
+    <div class="gamehead">
+      <h3 id="gameTitle">🎮 미니게임</h3>
+      <button class="cs-x" data-act="gameClose" aria-label="닫기">✕</button>
+    </div>
+    <div id="gameView"></div>
+  </div>
+</div>
+
 <!-- 축하 -->
 <div class="cel" id="celebrate" aria-hidden="true">
   <div class="cel-inner">
@@ -644,6 +797,122 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
   /* ================= 기본 상수 ================= */
   var KEY = 'familyHomeworkApp.v1';
   var DAYS = ['월', '화', '수', '목', '금', '토', '일'];
+
+  /* ============ 꾸미기 카탈로그 (캐릭터 · 내 방 · 상점) ============ */
+  var CH_CATS = [['face', '😊 표정'], ['hair', '🎀 머리'], ['cheek', '🌸 볼'], ['prop', '🪄 소품'], ['color', '🎨 색깔']];
+  var RM_CATS = [['theme', '🖼 벽지'], ['rug', '🧸 러그'], ['furn', '🛋 가구']];
+  /* [id, 이름, 가격(P)] — 0 P 는 처음부터 가지고 있는 기본 아이템 */
+  var CATALOG = {
+    face: [['smile', '웃는 얼굴', 0], ['wink', '윙크', 50], ['sparkle', '반짝반짝', 100], ['happy', '환한 웃음', 150]],
+    hair: [['none', '그냥', 0], ['ribbon', '리본', 0], ['pin', '별 핀', 50], ['bunny', '토끼 귀', 100], ['crown', '왕관', 250]],
+    cheek: [['blush', '볼터치', 0], ['heart', '하트 볼', 50], ['star', '별 스티커', 100]],
+    prop: [['none', '그냥', 0], ['pencil', '연필·책', 0], ['bag', '가방', 50], ['wand', '요술봉', 100], ['balloon', '하트 풍선', 150]],
+    color: [['cream', '크림', 0], ['sky', '연하늘', 0], ['lav', '연보라', 100], ['pink', '연핑크', 150]],
+    theme: [['cloud', '구름 방', 0], ['cream', '포근 크림', 100], ['night', '별빛 밤', 150], ['garden', '꽃밭 정원', 250]],
+    rug: [['none', '러그 없음', 0], ['cloud', '구름 러그', 0], ['star', '별 러그', 50], ['heart', '하트 러그', 100]],
+    furn: [['desk', '책상+스탠드', 0], ['window', '창문', 0], ['plant', '화분', 50], ['shelf', '책장', 100], ['bed', '폭신 침대', 150], ['doll', '인형', 250]]
+  };
+  var DEF_CHAR = { face: 'smile', hair: 'none', cheek: 'blush', prop: 'none', color: 'cream' };
+  var DEF_ROOM = { theme: 'cloud', rug: 'cloud', furn: ['desk', 'window'] };
+  var CH_FILL = { cream: '#FFFDF8', sky: '#E7F5FF', lav: '#F1EBFF', pink: '#FFEBF3' };
+  var CH_IN = { cream: '#D5EDFC', sky: '#BFE6FB', lav: '#DCD2FF', pink: '#FFC9DE' };
+  var CH_LINE = { cream: '#DEE8F1', sky: '#CBE6F7', lav: '#E2DAF7', pink: '#F7D6E2' };
+  var FURN_IDS = ['desk', 'window', 'plant', 'shelf', 'bed', 'doll'];
+  var FURN_VB = { desk: '204 86 104 66', bed: '0 80 116 62', shelf: '4 46 66 88', window: '214 10 86 68', plant: '262 106 54 56', doll: '42 106 44 50' };
+  var HEART_D = 'M20 34C9.5 26.5 5.5 21.5 5.5 16A8.5 8.5 0 0120 11a8.5 8.5 0 0114.5 5c0 5.5-4 10.5-14.5 18z';
+  var STAR_D = 'M20 3l4.7 10.4 11.3 1.2-8.5 7.6 2.5 11.2L20 27.7 10 33.4l2.5-11.2L4 7.6l11.3-1.2z';
+
+  /* 초2 기초 영단어 (그림 + 한국어 뜻 + 보기) */
+  var WORDS = [
+    ['apple', '사과', '🍎'], ['rabbit', '토끼', '🐰'], ['blue', '파랑', '🔵'], ['pencil', '연필', '✏️'],
+    ['star', '별', '⭐'], ['cloud', '구름', '☁️'], ['happy', '기쁜', '😊'], ['book', '책', '📕'],
+    ['milk', '우유', '🥛'], ['puppy', '강아지', '🐶'], ['banana', '바나나', '🍌'], ['cat', '고양이', '🐱'],
+    ['fish', '물고기', '🐟'], ['bread', '빵', '🍞'], ['red', '빨강', '🔴'], ['green', '초록', '🟢'],
+    ['chair', '의자', '🪑'], ['bag', '가방', '🎒'], ['flower', '꽃', '🌸'], ['sun', '해', '☀️'],
+    ['moon', '달', '🌙'], ['water', '물', '💧'], ['egg', '달걀', '🥚'], ['bird', '새', '🐦'],
+    ['bear', '곰', '🐻'], ['duck', '오리', '🦆'], ['cake', '케이크', '🍰'], ['shoe', '신발', '👟'],
+    ['hand', '손', '✋'], ['eye', '눈', '👀'], ['rain', '비', '🌧️'], ['snow', '눈(하늘)', '❄️'],
+    ['mom', '엄마', '👩'], ['dad', '아빠', '👨'], ['friend', '친구', '🧒'], ['school', '학교', '🏫'],
+    ['pink', '분홍', '🩷'], ['yellow', '노랑', '🟡'], ['tiger', '호랑이', '🐯'], ['pizza', '피자', '🍕']
+  ];
+
+  /* 오늘의 밸런스 게임 (A vs B) */
+  var BALANCE = [
+    ['아침에 일어나면?', '한 번 더 자기', '바로 일어나기', '😴', '🌞'],
+    ['숙제는?', '먼저 하고 놀기', '놀고 나서 하기', '📚', '🎠'],
+    ['여름 vs 겨울', '시원한 여름', '포근한 겨울', '🏖️', '⛄️'],
+    ['내 방에 있다면?', '폭신 침대', '비밀 놀이터', '🛏️', '🎪'],
+    ['반려동물은?', '강아지', '고양이', '🐶', '🐱'],
+    ['디저트는?', '딸기 케이크', '아이스크림', '🍰', '🍦'],
+    ['학교 가는 길?', '걸어서', '자전거 타고', '🚶', '🚲'],
+    ['하루 중 제일 좋은 때?', '아침', '저녁', '🌅', '🌆'],
+    ['만약 마법을 쓴다면?', '하늘을 나는 마법', '맛있는 음식 마법', '🕊️', '🍩'],
+    ['쉬는 시간엔?', '친구랑 노는 것', '혼자 책 읽기', '🤸', '📖'],
+    ['머리 모양은?', '긴 머리', '짧은 머리', '👧', '🧒'],
+    ['가고 싶은 곳?', '바다', '숲', '🌊', '🌳'],
+    ['엄마와 함께라면?', '공원 산책', '집에서 영화', '🚶‍♀️', '📺'],
+    ['새 신발을 산다면?', '반짝이는 운동화', '따뜻한 부츠', '👟', '🥾'],
+    ['싫어하는 음식은?', '당근', '브로콜리', '🥕', '🥦'],
+    ['크리스마스 선물?', '커다란 인형', '장난감 자동차', '🧸', '🚗'],
+    ['도서관에서?', '모험 이야기', '동물 그림책', '🗺️', '🐘'],
+    ['날씨는?', '맑은 날', '비 오는 날', '☀️', '☔️'],
+    ['친구랑 놀 때?', '술래잡기', '보드게임', '🏃', '🎲'],
+    ['밤에 잠들기 전?', '동화책 읽기', '이야기 나누기', '📚', '💬'],
+    ['과일은?', '수박', '딸기', '🍉', '🍓'],
+    ['머리 색을 바꾼다면?', '노란색', '보라색', '💛', '💜'],
+    ['주말에 일어나는 시간?', '늦게까지 자기', '일찍 일어나기', '⏰', '🌤️'],
+    ['내 방 색은?', '하늘색', '핑크색', '🔵', '🩷'],
+    ['슈퍼에서 고른다면?', '과자', '과일', '🍪', '🍇'],
+    ['눈이 많이 온 날?', '눈사람 만들기', '미끄럼틀 타기', '⛄️', '🛝'],
+    ['동생이 생긴다면?', '여동생', '남동생', '👧', '👦'],
+    ['발명한다면?', '자동 숙제 기계', '무한 아이스크림 기계', '🤖', '🍦'],
+    ['우리 집에 산다면?', '작은 강아지', '큰 거북이', '🐕', '🐢'],
+    ['제일 신나는 소리?', '똑똑 노크 소리', '딸그랑 종소리', '🚪', '🔔']
+  ];
+
+  function r2(n) { return Math.round(n * 100) / 100; }
+  function shapeAt(d, cx, cy, size, fill, stroke, sw, op) {
+    var sc = size / 40;
+    var s = '<path d="' + d + '" transform="translate(' + r2(cx - 20 * sc) + ',' + r2(cy - 20 * sc) + ') scale(' + r2(sc) + ')" fill="' + fill + '"';
+    if (stroke) { s += ' stroke="' + stroke + '" stroke-width="' + (sw || 2) + '" stroke-linejoin="round"'; }
+    if (op != null) { s += ' opacity="' + op + '"'; }
+    return s + '/>';
+  }
+  function catList(kind) { return CATALOG[kind] || []; }
+  function catFind(kind, val) {
+    var l = catList(kind);
+    for (var i = 0; i < l.length; i++) { if (l[i][0] === val) { return l[i]; } }
+    return null;
+  }
+  function catDef(kind) {
+    if (kind === 'theme') { return DEF_ROOM.theme; }
+    if (kind === 'rug') { return DEF_ROOM.rug; }
+    return DEF_CHAR[kind] || 'none';
+  }
+  function chVal(kind, v) { return catFind(kind, v) ? v : catDef(kind); }
+  function itemId(kind, val) { return kind + ':' + val; }
+  function itemPrice(kind, val) { var it = catFind(kind, val); return it ? it[2] : 0; }
+  function isYmd(s) { return /^\d{4}-\d{2}-\d{2}$/.test(String(s || '')); }
+
+  function normChar(c) {
+    c = isObj(c) ? c : {};
+    return {
+      face: chVal('face', c.face),
+      hair: chVal('hair', c.hair),
+      cheek: chVal('cheek', c.cheek),
+      prop: chVal('prop', c.prop),
+      color: chVal('color', c.color)
+    };
+  }
+  function normRoom(r) {
+    r = isObj(r) ? r : {};
+    var src = Array.isArray(r.furn) ? r.furn : DEF_ROOM.furn;
+    var furn = [];
+    for (var i = 0; i < FURN_IDS.length; i++) {
+      if (src.indexOf(FURN_IDS[i]) >= 0) { furn.push(FURN_IDS[i]); }
+    }
+    return { theme: chVal('theme', r.theme), rug: chVal('rug', r.rug), furn: furn };
+  }
 
   /* ================= 작은 도구들 ================= */
   function $(id) { return document.getElementById(id); }
@@ -773,6 +1042,59 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
       });
     }
     if (out.comments.length > 100) { out.comments = out.comments.slice(out.comments.length - 100); }
+
+    /* 캐릭터 · 내 방 꾸미기 (기존 데이터에 없으면 기본 모습) */
+    out.character = normChar(s.character);
+    out.room = normRoom(s.room);
+    out.unlockedItems = [];
+    var ui = Array.isArray(s.unlockedItems) ? s.unlockedItems : [];
+    for (var u = 0; u < ui.length; u++) {
+      if (typeof ui[u] === 'string' && ui[u].indexOf(':') > 0 && out.unlockedItems.indexOf(ui[u]) < 0) {
+        out.unlockedItems.push(ui[u]);
+      }
+    }
+
+    /* 잠긴 아이템은 기본 모습으로 (구매 기록에 없는 유료 아이템은 착용 해제) */
+    var ckeys = ['face', 'hair', 'cheek', 'prop', 'color'];
+    for (var ci = 0; ci < ckeys.length; ci++) {
+      var ck = ckeys[ci];
+      if (itemPrice(ck, out.character[ck]) > 0 && out.unlockedItems.indexOf(itemId(ck, out.character[ck])) < 0) {
+        out.character[ck] = catDef(ck);
+      }
+    }
+    if (itemPrice('theme', out.room.theme) > 0 && out.unlockedItems.indexOf(itemId('theme', out.room.theme)) < 0) {
+      out.room.theme = DEF_ROOM.theme;
+    }
+    if (itemPrice('rug', out.room.rug) > 0 && out.unlockedItems.indexOf(itemId('rug', out.room.rug)) < 0) {
+      out.room.rug = DEF_ROOM.rug;
+    }
+    var fkeep = [];
+    for (var fi = 0; fi < out.room.furn.length; fi++) {
+      var fv = out.room.furn[fi];
+      if (itemPrice('furn', fv) <= 0 || out.unlockedItems.indexOf(itemId('furn', fv)) >= 0) { fkeep.push(fv); }
+    }
+    out.room.furn = fkeep;
+
+    /* 포인트(돈) · 미니게임 기록 */
+    out.points = Math.max(0, Math.floor(Number(s.points) || 0));
+    out.pointDate = isYmd(s.pointDate) ? s.pointDate : '';
+    out.bestScore = Math.max(0, Math.floor(Number(s.bestScore) || 0));
+    out.miniGameBonusDate = isYmd(s.miniGameBonusDate) ? s.miniGameBonusDate : '';
+    out.balancePicks = [];
+    var bp = Array.isArray(s.balancePicks) ? s.balancePicks : [];
+    for (var bi = 0; bi < bp.length; bi++) {
+      var pb = bp[bi];
+      if (!isObj(pb)) { continue; }
+      var qn = Math.floor(Number(pb.q));
+      if (!(qn >= 0 && qn < 999)) { continue; }
+      out.balancePicks.push({
+        q: qn,
+        side: (pb.side === 'b') ? 'b' : 'a',
+        who: (pb.who === 'mom') ? 'mom' : 'child',
+        at: Math.max(0, Number(pb.at) || 0)
+      });
+    }
+    if (out.balancePicks.length > 40) { out.balancePicks = out.balancePicks.slice(out.balancePicks.length - 40); }
 
     out.updatedAt = Math.max(0, Number(s.updatedAt) || 0);
     return out;
@@ -926,6 +1248,15 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
     for (i = 0; i < cs.length; i++) {
       out.push(cs[i].author + '|' + cs[i].text + '|' + cs[i].at);
     }
+    out.push('@');
+    var chs = s.character || {};
+    out.push('c:' + chs.face + ',' + chs.hair + ',' + chs.cheek + ',' + chs.prop + ',' + chs.color);
+    var rms = s.room || {};
+    out.push('r:' + rms.theme + ',' + rms.rug + ',' + (rms.furn || []).join('+'));
+    out.push('p:' + (s.points | 0) + '/' + String(s.pointDate || '') + '/' + (s.bestScore | 0) + '/' +
+      String(s.miniGameBonusDate || '') + '/' + (s.unlockedItems || []).join('+'));
+    var bps = s.balancePicks || [];
+    for (i = 0; i < bps.length; i++) { out.push('b:' + bps[i].q + ',' + bps[i].side + ',' + bps[i].who); }
     return out.join('~');
   }
 
@@ -1191,6 +1522,262 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
       if (state.schedule[i].id === id) { return state.schedule[i]; }
     }
     return null;
+  }
+
+  /* ================= 캐릭터 · 내 방 그리기 ================= */
+  function charBody(cc) {
+    var c = normChar(cc);
+    var fill = CH_FILL[c.color] || CH_FILL.cream;
+    var inner = CH_IN[c.color] || CH_IN.cream;
+    var line = CH_LINE[c.color] || CH_LINE.cream;
+    var dark = '#3A4A57', mline = '#5E7385';
+    var g = '';
+
+    /* 토끼 귀 머리띠 (뒤) */
+    if (c.hair === 'bunny') {
+      g += '<g stroke="' + line + '" stroke-width="3">' +
+        '<ellipse cx="54" cy="30" rx="10" ry="24" transform="rotate(-10 54 30)" fill="' + fill + '"/>' +
+        '<ellipse cx="98" cy="30" rx="10" ry="24" transform="rotate(10 98 30)" fill="' + fill + '"/>' +
+        '</g>' +
+        '<ellipse cx="54" cy="30" rx="4.4" ry="15" transform="rotate(-10 54 30)" fill="' + inner + '"/>' +
+        '<ellipse cx="98" cy="30" rx="4.4" ry="15" transform="rotate(10 98 30)" fill="' + inner + '"/>';
+    }
+    /* 발 */
+    g += '<g stroke="' + line + '" stroke-width="3" fill="' + fill + '">' +
+      '<ellipse cx="56" cy="138" rx="14" ry="8"/><ellipse cx="96" cy="138" rx="14" ry="8"/></g>';
+    /* 귀 + 몸통 */
+    g += '<g stroke="' + line + '" stroke-width="3" fill="' + fill + '">' +
+      '<circle cx="42" cy="52" r="15"/><circle cx="110" cy="52" r="15"/>' +
+      '<ellipse cx="76" cy="96" rx="46" ry="41"/></g>' +
+      '<circle cx="42" cy="52" r="7" fill="' + inner + '"/>' +
+      '<circle cx="110" cy="52" r="7" fill="' + inner + '"/>';
+    /* 얼굴 */
+    if (c.face === 'sparkle') {
+      g += '<ellipse cx="58" cy="93" rx="6.2" ry="7.2" fill="' + dark + '"/>' +
+        '<ellipse cx="94" cy="93" rx="6.2" ry="7.2" fill="' + dark + '"/>' +
+        '<circle cx="55.6" cy="90" r="2.6" fill="#FFFFFF"/><circle cx="91.6" cy="90" r="2.6" fill="#FFFFFF"/>' +
+        '<circle cx="60.8" cy="96.6" r="1.5" fill="#FFFFFF" opacity=".85"/>' +
+        '<circle cx="96.8" cy="96.6" r="1.5" fill="#FFFFFF" opacity=".85"/>' +
+        shapeAt(STAR_D, 40, 78, 14, '#BFE6FB', null, 0, .95) +
+        shapeAt(STAR_D, 112, 78, 12, '#DCD2FF', null, 0, .95) +
+        '<path d="M70 105q6 6 12 0" fill="none" stroke="' + mline + '" stroke-width="2.8" stroke-linecap="round"/>';
+    } else if (c.face === 'wink') {
+      g += '<circle cx="56" cy="93" r="5.4" fill="' + dark + '"/>' +
+        '<circle cx="53.8" cy="90.6" r="2" fill="#FFFFFF"/>' +
+        '<path d="M88 94q6-7 12 0" fill="none" stroke="' + dark + '" stroke-width="3.2" stroke-linecap="round"/>' +
+        '<path d="M68 103q8 9 16 0z" fill="' + mline + '"/>';
+    } else if (c.face === 'happy') {
+      g += '<path d="M51 95q7-9 14 0" fill="none" stroke="' + dark + '" stroke-width="3.4" stroke-linecap="round"/>' +
+        '<path d="M87 95q7-9 14 0" fill="none" stroke="' + dark + '" stroke-width="3.4" stroke-linecap="round"/>' +
+        '<path d="M63 101q13 15 26 0z" fill="' + mline + '"/>';
+    } else {
+      g += '<circle cx="58" cy="93" r="5" fill="' + dark + '"/><circle cx="94" cy="93" r="5" fill="' + dark + '"/>' +
+        '<circle cx="56.8" cy="91.2" r="1.7" fill="#FFFFFF"/><circle cx="92.8" cy="91.2" r="1.7" fill="#FFFFFF"/>' +
+        '<path d="M76 102v4M76 106q-5.5 4.8-9 .7M76 106q5.5 4.8 9 .7" fill="none" stroke="' + mline + '" stroke-width="2.8" stroke-linecap="round"/>';
+    }
+    /* 볼 */
+    if (c.cheek === 'heart') {
+      g += shapeAt(HEART_D, 40, 108, 17, '#FFA9C7', null, 0, .9) + shapeAt(HEART_D, 112, 108, 17, '#FFA9C7', null, 0, .9);
+    } else if (c.cheek === 'star') {
+      g += shapeAt(STAR_D, 40, 108, 17, '#FFD98A', null, 0, .95) + shapeAt(STAR_D, 112, 108, 17, '#FFD98A', null, 0, .95);
+    } else {
+      g += '<ellipse cx="40" cy="108" rx="9" ry="5.6" fill="#FFB9CF" opacity=".8"/>' +
+        '<ellipse cx="112" cy="108" rx="9" ry="5.6" fill="#FFB9CF" opacity=".8"/>';
+    }
+    /* 머리 장식 */
+    if (c.hair === 'ribbon') {
+      g += '<g transform="translate(72 46)">' +
+        '<path d="M-4 0 -27 -13 -27 13 -4 0Z" fill="#FFC9DE" stroke="#F2A9C6" stroke-width="2.4" stroke-linejoin="round"/>' +
+        '<path d="M4 0 27 -13 27 13 4 0Z" fill="#FFC9DE" stroke="#F2A9C6" stroke-width="2.4" stroke-linejoin="round"/>' +
+        '<circle cx="0" cy="0" r="6.4" fill="#FFB3CE" stroke="#F2A9C6" stroke-width="2.4"/></g>';
+    } else if (c.hair === 'crown') {
+      g += '<g transform="translate(76 44)">' +
+        '<path d="M-22 6 -18 -18 -8 -6 0 -22 8 -6 18 -18 22 6Z" fill="#FFD98A" stroke="#EFC06E" stroke-width="2.4" stroke-linejoin="round"/>' +
+        '<rect x="-22" y="4" width="44" height="8" rx="4" fill="#FFE3A8" stroke="#EFC06E" stroke-width="2.4"/>' +
+        '<circle cx="0" cy="-22" r="3" fill="#FFF6DC" stroke="#EFC06E" stroke-width="1.6"/></g>';
+    } else if (c.hair === 'pin') {
+      g += shapeAt(STAR_D, 104, 62, 24, '#BFCFFF', '#A9BCF2', 3, 1) +
+        '<path d="M92 74l-8 8" stroke="#D9D2F7" stroke-width="3.4" stroke-linecap="round"/>';
+    }
+    /* 소품 */
+    if (c.prop === 'wand') {
+      g += '<path d="M104 126 L134 88" stroke="#F0C070" stroke-width="7" stroke-linecap="round"/>' +
+        '<path d="M104 126 L134 88" stroke="#FFF1C9" stroke-width="3" stroke-linecap="round"/>' +
+        shapeAt(STAR_D, 141, 78, 30, '#FFE3A0', '#EFC06E', 3, 1) +
+        shapeAt(STAR_D, 120, 64, 11, '#BFCFFF', null, 0, .9) +
+        shapeAt(STAR_D, 152, 104, 9, '#A9DCF5', null, 0, .9);
+    } else if (c.prop === 'pencil') {
+      g += '<g transform="rotate(16 124 104)">' +
+        '<rect x="118" y="66" width="13" height="48" rx="3" fill="#FFD98A" stroke="#EFC06E" stroke-width="2.2"/>' +
+        '<rect x="118" y="78" width="13" height="7" fill="#A9DCF5"/>' +
+        '<path d="M118 114h13l-6.5 13z" fill="#FFE9C9" stroke="#EFC06E" stroke-width="2.2" stroke-linejoin="round"/>' +
+        '<path d="M120.4 122h8.2l-4.1 5.6z" fill="#5E7385"/></g>' +
+        '<g transform="rotate(-6 112 132)">' +
+        '<rect x="96" y="120" width="34" height="22" rx="5" fill="#CFE9FB" stroke="#8FCDF0" stroke-width="2.4"/>' +
+        '<path d="M113 120v22" stroke="#8FCDF0" stroke-width="2.2"/>' +
+        shapeAt(STAR_D, 105, 131, 10, '#FFD98A', null, 0, 1) + '</g>';
+    } else if (c.prop === 'bag') {
+      g += '<path d="M50 74 Q80 112 108 126" fill="none" stroke="#A9DCF5" stroke-width="7" stroke-linecap="round"/>' +
+        '<g transform="translate(116 128) rotate(-8)">' +
+        '<rect x="-17" y="-11" width="34" height="26" rx="9" fill="#D9EFFF" stroke="#8FCDF0" stroke-width="2.6"/>' +
+        '<path d="M-17 0h34" stroke="#8FCDF0" stroke-width="2.4"/>' +
+        '<circle cx="0" cy="6" r="3.4" fill="#FFFFFF" stroke="#8FCDF0" stroke-width="1.8"/></g>';
+    } else if (c.prop === 'balloon') {
+      g += '<path d="M120 70 Q112 98 100 108" fill="none" stroke="#B7E2F8" stroke-width="2.6"/>' +
+        shapeAt(HEART_D, 132, 54, 40, '#FFB3CE', '#F294B4', 3, 1) +
+        '<path d="M132 70l-4 7h8z" fill="#F294B4"/>' +
+        '<ellipse cx="124" cy="46" rx="4" ry="6" fill="#FFFFFF" opacity=".55" transform="rotate(-20 124 46)"/>';
+    }
+    return g;
+  }
+
+  function charSvg(cc, cls) {
+    return '<svg class="charsvg' + (cls ? ' ' + cls : '') + '" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">' + charBody(cc) + '</svg>';
+  }
+
+  var ROOM_T = {
+    cloud: { wall: '#E9F6FF', board: '#CFE9FB', floor: '#DBEEFA', plank: '#C7E0F1' },
+    night: { wall: '#46578C', board: '#3A4A7B', floor: '#3D4C7C', plank: '#33416D' },
+    cream: { wall: '#FFF7EB', board: '#F0DFC4', floor: '#F6E8D3', plank: '#E9D6B8' },
+    garden: { wall: '#E9F8F0', board: '#CBEBD9', floor: '#DCF2E2', plank: '#C9E6D1' }
+  };
+
+  function furnShelf() {
+    return '<g>' +
+      '<rect x="10" y="52" width="54" height="76" rx="7" fill="#F6E7D3" stroke="#E3CFAF" stroke-width="2.6"/>' +
+      '<path d="M10 78h54M10 102h54" stroke="#E3CFAF" stroke-width="2.4"/>' +
+      '<rect x="17" y="60" width="8" height="18" rx="2" fill="#A9DCF5"/>' +
+      '<rect x="27" y="64" width="8" height="14" rx="2" fill="#FFC9DE"/>' +
+      '<rect x="37" y="58" width="8" height="20" rx="2" fill="#BFCFFF"/>' +
+      '<rect x="17" y="84" width="9" height="18" rx="2" fill="#B9EFDC"/>' +
+      '<rect x="28" y="88" width="9" height="14" rx="2" fill="#FFD98A"/>' +
+      '<rect x="17" y="108" width="34" height="12" rx="3" fill="#FFE9A8"/>' +
+      '</g>';
+  }
+  function furnWindow(theme) {
+    return '<g>' +
+      '<rect x="222" y="18" width="66" height="54" rx="8" fill="#CFEBFB" stroke="#FFFFFF" stroke-width="5"/>' +
+      '<circle cx="248" cy="34" r="7" fill="' + (theme === 'night' ? '#FFF3CE' : '#FFE9A8') + '"/>' +
+      '<g fill="#FFFFFF" opacity=".92"><ellipse cx="266" cy="56" rx="14" ry="7"/><ellipse cx="256" cy="52" rx="9" ry="5"/></g>' +
+      '<path d="M255 18v54M222 45h66" stroke="#FFFFFF" stroke-width="3.4"/>' +
+      '<rect x="214" y="69" width="82" height="6" rx="3" fill="#FFFFFF"/>' +
+      '</g>';
+  }
+  function furnBed() {
+    return '<g>' +
+      '<rect x="4" y="112" width="104" height="32" rx="9" fill="#D9EFFF" stroke="#A9DCF5" stroke-width="2.6"/>' +
+      '<rect x="4" y="132" width="104" height="16" rx="7" fill="#BFE0F5"/>' +
+      '<rect x="10" y="98" width="26" height="22" rx="9" fill="#FFFFFF" stroke="#CFE9FB" stroke-width="2.4"/>' +
+      '<path d="M44 116h58M44 124h58" stroke="#A9DCF5" stroke-width="2" opacity=".55"/>' +
+      '<rect x="14" y="146" width="9" height="10" rx="3" fill="#CFE0EE"/>' +
+      '<rect x="90" y="146" width="9" height="10" rx="3" fill="#CFE0EE"/>' +
+      '</g>';
+  }
+  function furnDesk() {
+    return '<g>' +
+      '<rect x="206" y="120" width="80" height="10" rx="4" fill="#EFD3B0" stroke="#DFBE97" stroke-width="2"/>' +
+      '<rect x="212" y="130" width="8" height="26" fill="#DFBE97"/>' +
+      '<rect x="272" y="130" width="8" height="26" fill="#DFBE97"/>' +
+      '<rect x="240" y="100" width="10" height="20" fill="#A9DCF5"/>' +
+      '<path d="M229 100h32l-6-14h-20z" fill="#FFE3A0" stroke="#F0C070" stroke-width="2" stroke-linejoin="round"/>' +
+      '<rect x="256" y="108" width="24" height="12" rx="2" fill="#BFCFFF" stroke="#A9BCF2" stroke-width="1.6"/>' +
+      '</g>';
+  }
+  function furnPlant() {
+    return '<g>' +
+      '<path d="M292 140c-12-6-16-20-6-28 12 2 18 14 12 28z" fill="#B9EFDC" stroke="#8CD1AE" stroke-width="2"/>' +
+      '<path d="M292 142c10-8 12-20 4-26-10 4-14 16-8 26z" fill="#A6E3C8" stroke="#8CD1AE" stroke-width="2"/>' +
+      '<rect x="282" y="140" width="22" height="18" rx="5" fill="#F0C9A8" stroke="#DCB48F" stroke-width="2"/>' +
+      '</g>';
+  }
+  function furnDoll() {
+    return '<g transform="translate(64 140)">' +
+      '<circle cx="0" cy="-26" r="10" fill="#FFE0EC" stroke="#F2B9CF" stroke-width="2"/>' +
+      '<circle cx="-9" cy="-34" r="5" fill="#FFE0EC" stroke="#F2B9CF" stroke-width="2"/>' +
+      '<circle cx="9" cy="-34" r="5" fill="#FFE0EC" stroke="#F2B9CF" stroke-width="2"/>' +
+      '<ellipse cx="0" cy="-12" rx="12" ry="12" fill="#FFE0EC" stroke="#F2B9CF" stroke-width="2"/>' +
+      '<circle cx="-4" cy="-27" r="1.8" fill="#5E7385"/><circle cx="4" cy="-27" r="1.8" fill="#5E7385"/>' +
+      '<path d="M-2 -21q2 2 4 0" stroke="#C98BA4" stroke-width="1.6" fill="none" stroke-linecap="round"/>' +
+      '</g>';
+  }
+
+  function roomSvg(rm, cc, vb) {
+    var r = normRoom(rm);
+    var t = ROOM_T[r.theme] || ROOM_T.cloud;
+    var s = '';
+    s += '<rect x="0" y="0" width="320" height="143" fill="' + t.wall + '"/>';
+    if (r.theme === 'cloud') {
+      s += '<g fill="#FFFFFF" opacity=".85"><ellipse cx="52" cy="34" rx="30" ry="15"/><ellipse cx="76" cy="27" rx="19" ry="12"/>' +
+        '<ellipse cx="250" cy="58" rx="24" ry="12"/><ellipse cx="266" cy="52" rx="15" ry="9"/></g>' +
+        '<g fill="#D9EEFB"><circle cx="150" cy="30" r="3"/><circle cx="176" cy="24" r="2.4"/><circle cx="204" cy="34" r="2"/></g>';
+    } else if (r.theme === 'night') {
+      s += '<circle cx="246" cy="44" r="20" fill="#FFF3CE"/><circle cx="258" cy="36" r="18" fill="' + t.wall + '"/>' +
+        '<g fill="#FFE3A0"><circle cx="60" cy="30" r="2.4"/><circle cx="96" cy="52" r="2"/><circle cx="140" cy="26" r="2.6"/>' +
+        '<circle cx="186" cy="44" r="2"/><circle cx="214" cy="24" r="2.2"/><circle cx="112" cy="16" r="2"/></g>' +
+        shapeAt(STAR_D, 74, 64, 14, '#FFE3A0', null, 0, .9) + shapeAt(STAR_D, 200, 74, 11, '#FFE3A0', null, 0, .8);
+    } else if (r.theme === 'cream') {
+      s += '<g fill="#F7E2CB"><ellipse cx="58" cy="30" rx="26" ry="13"/><ellipse cx="80" cy="24" rx="16" ry="10"/></g>' +
+        shapeAt(HEART_D, 210, 38, 22, '#FBD3E0', null, 0, .85) + shapeAt(HEART_D, 250, 26, 15, '#FBD3E0', null, 0, .7) +
+        '<g stroke="#EFD9BE" stroke-width="3" stroke-linecap="round"><path d="M32 92h24"/><path d="M96 100h16"/></g>';
+    } else {
+      s += '<circle cx="252" cy="34" r="16" fill="#FFE9A8"/>' +
+        '<g fill="#B9EFDC"><ellipse cx="52" cy="34" rx="26" ry="13"/><ellipse cx="74" cy="28" rx="16" ry="10"/></g>' +
+        '<g><circle cx="140" cy="60" r="6" fill="#FFC9DE"/><circle cx="152" cy="70" r="5" fill="#FFD98A"/><circle cx="176" cy="52" r="5.5" fill="#FFC9DE"/>' +
+        '<path d="M140 66v14M176 58v12" stroke="#8CD1AE" stroke-width="2.4"/></g>';
+    }
+    /* 걸레받이 · 바닥 */
+    s += '<rect x="0" y="136" width="320" height="8" fill="' + t.board + '"/>' +
+      '<rect x="0" y="144" width="320" height="46" fill="' + t.floor + '"/>' +
+      '<g stroke="' + t.plank + '" stroke-width="2"><path d="M0 160h320"/><path d="M0 176h320"/><path d="M80 144v46"/><path d="M200 144v46"/></g>';
+    /* 러그 */
+    if (r.rug === 'cloud') {
+      s += '<g fill="#FFFFFF"><ellipse cx="160" cy="170" rx="66" ry="15"/><ellipse cx="124" cy="164" rx="24" ry="11"/><ellipse cx="196" cy="165" rx="22" ry="10"/></g>';
+    } else if (r.rug === 'star') {
+      s += shapeAt(STAR_D, 160, 162, 104, '#FFE3A0', '#F0C070', 2, .95);
+    } else if (r.rug === 'heart') {
+      s += shapeAt(HEART_D, 160, 156, 104, '#FFC9DE', '#F2A9C6', 2, .95);
+    }
+    /* 가구 */
+    if (r.furn.indexOf('shelf') >= 0) { s += furnShelf(); }
+    if (r.furn.indexOf('window') >= 0) { s += furnWindow(r.theme); }
+    if (r.furn.indexOf('bed') >= 0) { s += furnBed(); }
+    if (r.furn.indexOf('doll') >= 0) { s += furnDoll(); }
+    if (r.furn.indexOf('desk') >= 0) { s += furnDesk(); }
+    if (r.furn.indexOf('plant') >= 0) { s += furnPlant(); }
+    /* 캐릭터 */
+    s += '<g transform="translate(122,85) scale(0.5)">' + charBody(cc) + '</g>';
+    return '<svg class="roomsvg" viewBox="' + (vb || '0 0 320 190') + '" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">' + s + '</svg>';
+  }
+
+  var heroCache = '';
+  var roomCache = '';
+  function renderHero() {
+    var el = $('heroChar');
+    if (!el) { return; }
+    var sig = JSON.stringify(normChar(state.character));
+    if (sig === heroCache && el.innerHTML) { return; }
+    heroCache = sig;
+    el.innerHTML = charSvg(state.character);
+  }
+  function renderRoom() {
+    var stage = $('roomStage');
+    if (stage) {
+      var sig = JSON.stringify(normRoom(state.room)) + JSON.stringify(normChar(state.character));
+      if (sig !== roomCache || !stage.innerHTML) {
+        roomCache = sig;
+        stage.innerHTML = roomSvg(state.room, state.character);
+      }
+    }
+    var pn = $('ptNum');
+    if (pn) { pn.textContent = String(state.points); }
+    var hs = $('roomHint');
+    if (hs) {
+      var t = todayKey();
+      var a = (state.pointDate === t)
+        ? '💰 오늘 100 P 받았어요! 내일 또 모아요'
+        : '📚 오늘 할 일을 <b>모두</b> 끝내면 <b>💰 100 P</b>';
+      hs.innerHTML = a + ((state.miniGameBonusDate === t) ? '' : ' · 🎮 놀이 보너스 20 P 대기 중');
+    }
   }
 
   /* ================= 그리기 ================= */
@@ -1507,6 +2094,8 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
 
   function render() {
     renderHeader();
+    renderHero();
+    renderRoom();
     renderToday();
     renderWeek();
     renderStickers();
@@ -1644,6 +2233,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
     for (var i = 0; i < list.length; i++) { if (!list[i].done) { allDone = false; } }
 
     var awarded = false, earnedTicket = false, revoked = false;
+    var ptsGot = 0, ptsBack = 0;
 
     if (it.done) {
       if (allDone && state.stickerDate !== t) {
@@ -1653,6 +2243,12 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
         if (state.stickers >= 10) { state.stickers = 0; state.tickets++; earnedTicket = true; }
         state.stickerDate = t;
         state.stickerTicket = earnedTicket ? t : '';
+      }
+      /* 하루 1회 100 P — 오늘 할 일을 모두 끝냈을 때만 */
+      if (allDone && state.pointDate !== t) {
+        state.points += 100;
+        state.pointDate = t;
+        ptsGot = 100;
       }
     } else if (!allDone && state.stickerDate === t) {
       /* 오늘 받은 스티커를 회수: 100%가 아니면 오늘은 안 받은 것으로 */
@@ -1668,6 +2264,16 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
         state.stickers--;
       }
       if (state.totalStickers > 0) { state.totalStickers--; }
+      if (state.pointDate === t) {
+        state.pointDate = '';
+        ptsBack = Math.min(100, state.points);
+        state.points = Math.max(0, state.points - 100);
+      }
+    } else if (!allDone && state.pointDate === t) {
+      /* 스티커는 이미 회수됐어도 포인트가 남아 있으면 같이 회수 (0 아래로는 안 내려감) */
+      state.pointDate = '';
+      ptsBack = Math.min(100, state.points);
+      state.points = Math.max(0, state.points - 100);
     }
 
     var cards = [];
@@ -1676,7 +2282,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
     }
     if (it.done && allDone && state.celebrated !== t) {
       state.celebrated = t;
-      cards.push({ emoji: '🎉', title: '오늘 숙제 끝!', sub: state.childName + josa(state.childName, '이가', '가') + ' 정말 멋졌어요. 스티커 1개도 받았어요!' });
+      cards.push({ emoji: '🎉', title: '오늘 숙제 끝!', sub: state.childName + josa(state.childName, '이가', '가') + ' 정말 멋졌어요. 스티커 1개도 받았어요!' + (ptsGot ? ' 💰 ' + ptsGot + ' P도 받았어요!' : '') });
     }
 
     save();
@@ -1686,11 +2292,11 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
       showCelebration(cards);
     } else if (awarded) {
       miniStar();
-      toast('오늘 숙제를 모두 끝냈어요! 칭찬 스티커 1개 ⭐');
+      toast('오늘 숙제를 모두 끝냈어요! 칭찬 스티커 1개 ⭐' + (ptsGot ? ' · 💰 +' + ptsGot + ' P' : ''));
     } else if (revoked) {
-      toast('하나가 남아서 오늘 스티커는 쉬어 가요 🌱');
+      toast('하나가 남아서 오늘 스티커는 쉬어 가요 🌱' + (ptsBack ? ' · 💰 −' + ptsBack + ' P' : ''));
     } else if (it.done && allDone) {
-      toast('오늘 스티커는 이미 받았어요 ⭐');
+      toast('오늘 스티커는 이미 받았어요 ⭐' + (ptsGot ? ' · 💰 +' + ptsGot + ' P' : ''));
     } else if (it.done) {
       toast(praise());
     } else {
@@ -1983,6 +2589,418 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
     toast('처음 상태로 되돌렸어요', '되돌리기', 'undo');
   }
 
+  /* ================= 꾸미기 · 상점 ================= */
+  var decoMode = 'char';
+  var decoCat = 'face';
+  var buyAsk = null;
+
+  function owns(kind, val) {
+    if (itemPrice(kind, val) <= 0) { return true; }
+    return state.unlockedItems.indexOf(itemId(kind, val)) >= 0;
+  }
+  function isOn(kind, val) {
+    if (kind === 'theme') { return state.room.theme === val; }
+    if (kind === 'rug') { return state.room.rug === val; }
+    if (kind === 'furn') { return state.room.furn.indexOf(val) >= 0; }
+    return state.character[kind] === val;
+  }
+  function openDeco() {
+    var w = $('decoSheet');
+    if (!w) { return; }
+    decoMode = 'char';
+    decoCat = 'face';
+    buyAsk = null;
+    renderDeco();
+    w.classList.add('show');
+    w.setAttribute('aria-hidden', 'false');
+  }
+  function closeDeco() {
+    var w = $('decoSheet');
+    buyAsk = null;
+    if (w) { w.classList.remove('show'); w.setAttribute('aria-hidden', 'true'); }
+  }
+  function setDecoMode(m) {
+    decoMode = (m === 'room') ? 'room' : 'char';
+    decoCat = (decoMode === 'room') ? 'theme' : 'face';
+    buyAsk = null;
+    renderDeco();
+  }
+  function setDecoCat(c) {
+    if (!catList(c).length) { return; }
+    decoCat = c;
+    buyAsk = null;
+    renderDeco();
+  }
+
+  function decoOptHtml(kind, it) {
+    var id = it[0], label = it[1], price = it[2];
+    var on = isOn(kind, id);
+    var own = owns(kind, id);
+    var prev;
+    if (kind === 'theme') {
+      prev = roomSvg({ theme: id, rug: state.room.rug, furn: state.room.furn }, state.character);
+    } else if (kind === 'rug') {
+      prev = roomSvg({ theme: state.room.theme, rug: id, furn: state.room.furn }, state.character, '56 146 208 44');
+    } else if (kind === 'furn') {
+      var tmpF = state.room.furn.slice();
+      if (tmpF.indexOf(id) < 0) { tmpF.push(id); }
+      prev = roomSvg({ theme: state.room.theme, rug: state.room.rug, furn: tmpF }, state.character, FURN_VB[id] || '0 0 320 190');
+    } else {
+      var tmpC = normChar(state.character);
+      tmpC[kind] = id;
+      prev = charSvg(tmpC);
+    }
+    var tag = own ? '' : '<span class="cscoin">🔒 ' + price + ' P</span>';
+    return '<button class="decoopt' + (on ? ' on' : '') + (own ? '' : ' locked') + '" data-act="decoPick" data-kind="' + kind + '" data-val="' + id + '" aria-pressed="' + (on ? 'true' : 'false') + '">' +
+      '<span class="decoprev">' + prev + '</span>' +
+      '<span class="decolbl">' + esc(label) + '</span>' + tag + '</button>';
+  }
+
+  function renderDeco() {
+    var money = $('decoMoney');
+    if (money) { money.innerHTML = '💰 <b>' + state.points + '</b> P'; }
+    var mode = $('decoMode');
+    if (mode) {
+      mode.innerHTML = '<button class="modebtn' + (decoMode === 'char' ? ' on' : '') + '" data-act="decoMode" data-mode="char">🎀 캐릭터</button>' +
+        '<button class="modebtn' + (decoMode === 'room' ? ' on' : '') + '" data-act="decoMode" data-mode="room">🏠 내 방</button>';
+    }
+    var stage = $('decoStage');
+    if (stage) {
+      stage.className = 'decostage' + (decoMode === 'char' ? ' charmode' : '');
+      stage.innerHTML = (decoMode === 'char')
+        ? charSvg(state.character)
+        : roomSvg(state.room, state.character);
+    }
+    var cats = $('decoCats');
+    if (cats) {
+      var cl = (decoMode === 'char') ? CH_CATS : RM_CATS;
+      var ch = '';
+      for (var i = 0; i < cl.length; i++) {
+        ch += '<button class="catbtn' + (decoCat === cl[i][0] ? ' on' : '') + '" data-act="decoCat" data-cat="' + cl[i][0] + '">' + cl[i][1] + '</button>';
+      }
+      cats.innerHTML = ch;
+    }
+    var grid = $('decoGrid');
+    if (grid) {
+      var list = catList(decoCat);
+      var gh = '';
+      for (var j = 0; j < list.length; j++) { gh += decoOptHtml(decoCat, list[j]); }
+      grid.innerHTML = gh;
+    }
+    renderBuyBar();
+  }
+
+  function renderBuyBar() {
+    var b = $('decoBuy');
+    if (!b) { return; }
+    if (!buyAsk) { b.hidden = true; b.innerHTML = ''; return; }
+    var it = catFind(buyAsk.kind, buyAsk.val);
+    var nm = it ? it[1] : '';
+    var pr = it ? it[2] : 0;
+    var can = state.points >= pr;
+    b.hidden = false;
+    b.innerHTML = '<div class="buyline">' + (can
+      ? '‘' + esc(nm) + '’을(를) <b>' + pr + ' P</b>에 살까요? <span class="buynow">지금 ' + state.points + ' P</span>'
+      : '‘' + esc(nm) + '’은(는) <b>' + pr + ' P</b>예요. 지금 ' + state.points + ' P — ' + (pr - state.points) + ' P 더 모아요! 💪') + '</div>' +
+      '<div class="buyacts">' +
+      (can ? '<button class="btn primary" data-act="decoBuy">살래요</button>' : '') +
+      '<button class="btn ghost" data-act="decoBuyCancel">' + (can ? '그만두기' : '알겠어') + '</button></div>';
+  }
+
+  function applyPick(kind, val) {
+    if (kind === 'theme') { state.room.theme = val; }
+    else if (kind === 'rug') { state.room.rug = val; }
+    else { state.character[kind] = val; }
+    save();
+    render();
+    renderDeco();
+  }
+
+  function decoPick(kind, val) {
+    if (!catList(kind).length || !catFind(kind, val)) { return; }
+    if (kind === 'furn') {
+      var at = state.room.furn.indexOf(val);
+      if (at >= 0) {
+        state.room.furn.splice(at, 1);
+        save();
+        render();
+        renderDeco();
+        return;
+      }
+      if (!owns('furn', val)) { buyAsk = { kind: kind, val: val }; renderBuyBar(); return; }
+      state.room.furn.push(val);
+      save();
+      render();
+      renderDeco();
+      return;
+    }
+    if (isOn(kind, val)) { buyAsk = null; renderBuyBar(); return; }
+    if (!owns(kind, val)) { buyAsk = { kind: kind, val: val }; renderBuyBar(); return; }
+    buyAsk = null;
+    applyPick(kind, val);
+  }
+
+  function confirmBuy() {
+    if (!buyAsk) { return; }
+    var kind = buyAsk.kind, val = buyAsk.val;
+    var pr = itemPrice(kind, val);
+    if (pr <= 0) { buyAsk = null; applyPick(kind, val); return; }
+    if (state.points < pr) { toast('포인트가 조금 부족해요 💰'); return; }
+    state.points -= pr;
+    var id = itemId(kind, val);
+    if (state.unlockedItems.indexOf(id) < 0) { state.unlockedItems.push(id); }
+    buyAsk = null;
+    if (kind === 'furn') {
+      if (state.room.furn.indexOf(val) < 0) { state.room.furn.push(val); }
+      save();
+      render();
+      renderDeco();
+    } else {
+      applyPick(kind, val);
+    }
+    toast('🎉 ‘' + (catFind(kind, val) ? catFind(kind, val)[1] : '') + '’을(를) 샀어요!');
+  }
+
+  function decoReset() {
+    if (decoMode === 'char') { state.character = normChar(null); }
+    else { state.room = normRoom(null); }
+    buyAsk = null;
+    save();
+    render();
+    renderDeco();
+    toast('처음 모습으로 돌아왔어요 🩵');
+  }
+
+  /* ================= 미니게임 (영어 단어 · 밸런스) ================= */
+  var QUIZ = { view: 'menu', i: 0, score: 0, qs: [], picked: null, bonus: 0 };
+  var BAL = { i: 0, picked: null };
+  var balWho = 'child';
+
+  function openGame() {
+    var w = $('gameSheet');
+    if (!w) { return; }
+    QUIZ.view = 'menu';
+    w.classList.add('show');
+    w.setAttribute('aria-hidden', 'false');
+    renderGame();
+  }
+  function closeGame() {
+    var w = $('gameSheet');
+    if (w) { w.classList.remove('show'); w.setAttribute('aria-hidden', 'true'); }
+    try { if (window.speechSynthesis) { window.speechSynthesis.cancel(); } } catch (e) { }
+  }
+
+  function gameMenu() {
+    QUIZ.view = 'menu';
+    BAL.picked = null;
+    renderGame();
+  }
+
+  function speak(text) {
+    try {
+      var syn = (typeof window !== 'undefined') ? window.speechSynthesis : null;
+      var Utt = (typeof window !== 'undefined') ? window.SpeechSynthesisUtterance : null;
+      if (!syn || typeof Utt !== 'function') {
+        toast('이 브라우저에서는 소리가 안 나와요. 같이 읽어 봐요!');
+        return;
+      }
+      var u = new Utt(String(text));
+      u.lang = 'en-US';
+      u.rate = 0.85;
+      syn.cancel();
+      syn.speak(u);
+    } catch (e) { }
+  }
+
+  function menuHtml() {
+    return '<div class="gamemenu">' +
+      '<button class="gcard" data-act="wordStart">' +
+      '<span class="gicon">🔤</span>' +
+      '<span class="gtxt"><span class="gtitle">영어 단어 맞추기</span>' +
+      '<span class="gsub">그림을 보고 알맞은 영어 단어를 골라요 · 5문제 · 최고 ' + state.bestScore + '점</span></span>' +
+      '<span class="garrow">›</span></button>' +
+      '<button class="gcard bal" data-act="balOpen">' +
+      '<span class="gicon">🆚</span>' +
+      '<span class="gtxt"><span class="gtitle">오늘의 밸런스 게임</span>' +
+      '<span class="gsub">A vs B, 엄마랑 같이 골라 보세요 · ' + BALANCE.length + '가지 질문</span></span>' +
+      '<span class="garrow">›</span></button>' +
+      '</div>' +
+      '<div class="gameintro" style="margin-top:10px">오늘 처음 놀이를 끝내면 <b>💰 20 P</b>를 받아요. (하루 1번)<br>숙제를 모두 끝내면 <b>💰 100 P</b> — 제일 큰 보상이에요!</div>';
+  }
+
+  function wordStart() {
+    var pool = WORDS.slice();
+    var qs = [];
+    for (var i = 0; i < 5 && pool.length; i++) {
+      var at = Math.floor(Math.random() * pool.length);
+      var w = pool.splice(at, 1)[0];
+      var opts = [w[0]];
+      var guard = 0;
+      while (opts.length < 4 && guard++ < 300) {
+        var o = WORDS[Math.floor(Math.random() * WORDS.length)][0];
+        if (opts.indexOf(o) < 0) { opts.push(o); }
+      }
+      for (var k = opts.length - 1; k > 0; k--) {
+        var j = Math.floor(Math.random() * (k + 1));
+        var tmp = opts[k]; opts[k] = opts[j]; opts[j] = tmp;
+      }
+      qs.push({ en: w[0], kr: w[1], emo: w[2], opts: opts });
+    }
+    QUIZ.view = 'word';
+    QUIZ.i = 0;
+    QUIZ.score = 0;
+    QUIZ.qs = qs;
+    QUIZ.picked = null;
+    QUIZ.bonus = 0;
+    renderGame();
+  }
+
+  function wordPick(idx) {
+    var q = QUIZ.qs[QUIZ.i];
+    if (!q || QUIZ.picked != null) { return; }
+    var n = Number(idx);
+    if (!(n >= 0 && n < q.opts.length)) { return; }
+    QUIZ.picked = n;
+    if (q.opts[n] === q.en) { QUIZ.score += 20; }
+    renderGame();
+  }
+
+  function wordNext() {
+    if (QUIZ.picked == null) { return; }
+    if (QUIZ.i + 1 >= QUIZ.qs.length) { wordFinish(); return; }
+    QUIZ.i++;
+    QUIZ.picked = null;
+    renderGame();
+  }
+
+  function wordFinish() {
+    QUIZ.view = 'done';
+    QUIZ.bonus = 0;
+    if (QUIZ.score > state.bestScore) { state.bestScore = QUIZ.score; }
+    if (state.miniGameBonusDate !== todayKey()) {
+      state.miniGameBonusDate = todayKey();
+      state.points += 20;
+      QUIZ.bonus = 20;
+    }
+    save();
+    render();
+    renderGame();
+    if (QUIZ.bonus) { toast('🎮 오늘 첫 놀이 보너스 💰 +20 P!'); }
+  }
+
+  function wordViewHtml() {
+    var q = QUIZ.qs[QUIZ.i];
+    if (!q) { return menuHtml(); }
+    var h = '<div class="gametop"><button class="gback" data-act="gameMenu">‹ 메뉴</button>' +
+      '<span class="gscore">' + QUIZ.score + '점</span>' +
+      '<span class="gbest">최고 ' + state.bestScore + '점</span></div>' +
+      '<div class="quizbox"><div class="qprog">' + (QUIZ.i + 1) + ' / ' + QUIZ.qs.length + '</div>' +
+      '<div class="qemoji">' + q.emo + '</div>' +
+      '<div class="qkr">' + esc(q.kr) + '</div>' +
+      '<div class="qhint">이것은 영어로?</div>' +
+      '<button class="qspk" data-act="wordSpeak">🔊 발음 듣기</button></div>' +
+      '<div class="choices">';
+    for (var i = 0; i < q.opts.length; i++) {
+      var cls = 'choice';
+      if (QUIZ.picked != null) {
+        if (q.opts[i] === q.en) { cls += ' right'; }
+        else if (i === QUIZ.picked) { cls += ' wrong'; }
+      }
+      h += '<button class="' + cls + '" data-act="wordPick" data-idx="' + i + '">' + esc(q.opts[i]) + '</button>';
+    }
+    h += '</div>';
+    var foot;
+    if (QUIZ.picked == null) { foot = '알맞은 단어를 콕 눌러 보세요'; }
+    else if (q.opts[QUIZ.picked] === q.en) { foot = '⭐ 정답! 멋져요! +20점'; }
+    else { foot = '🩵 정답은 “' + q.en + '” — 같이 읽어 봐요!'; }
+    h += '<div class="quizfoot">' + esc(foot) + '</div>';
+    if (QUIZ.picked != null) {
+      h += '<button class="btn primary wide" data-act="wordNext">' +
+        (QUIZ.i + 1 >= QUIZ.qs.length ? '결과 보기 🎉' : '다음 문제 ▶') + '</button>';
+    }
+    return h;
+  }
+
+  function wordDoneHtml() {
+    var emo = QUIZ.score >= 100 ? '🏆' : QUIZ.score >= 60 ? '🌟' : '🩵';
+    var say = QUIZ.score >= 100 ? '완벽해요! 영어 천재!' : QUIZ.score >= 60 ? '정말 잘했어요!' : '한 번 더 해 볼까요?'; 
+    return '<div class="gametop"><button class="gback" data-act="gameMenu">‹ 메뉴</button>' +
+      '<span class="gbest" style="margin-left:auto">최고 ' + state.bestScore + '점</span></div>' +
+      '<div class="qdone"><div class="qde">' + emo + '</div>' +
+      '<div class="qdt">이번 점수 ' + QUIZ.score + '점</div>' +
+      '<div class="qds">' + esc(say) + ' · 최고 점수 ' + state.bestScore + '점</div>' +
+      (QUIZ.bonus ? '<div class="qdp">오늘 첫 놀이 보너스 💰 +' + QUIZ.bonus + ' P</div>'
+        : '<div class="qdp" style="background:#F3F7FA;border-color:#E4EBF2;color:#7A8FA3">오늘 놀이 보너스는 이미 받았어요</div>') +
+      '</div>' +
+      '<div class="row2"><button class="btn ghost" data-act="gameMenu">메뉴로</button>' +
+      '<button class="btn primary" data-act="wordStart">한 번 더!</button></div>';
+  }
+
+  function balViewHtml() {
+    var qi = BAL.i % BALANCE.length;
+    var q = BALANCE[qi];
+    if (!q) { return menuHtml(); }
+    var who = (balWho === 'mom') ? '엄마' : state.childName;
+    var h = '<div class="gametop"><button class="gback" data-act="gameMenu">‹ 메뉴</button>' +
+      '<span class="gtimer">🆚 밸런스</span>' +
+      '<span class="gbest">' + (qi + 1) + ' / ' + BALANCE.length + '</span></div>' +
+      '<div class="balq"><div class="balnum">오늘의 밸런스 게임</div>' +
+      '<div class="baltxt">' + esc(q[0]) + '</div></div>' +
+      '<div class="balbtns">' +
+      '<button class="balbtn' + (BAL.picked === 'a' ? ' picked' : '') + '" data-act="balPick" data-side="a">' +
+      '<span class="bale">' + q[3] + '</span><span class="balv">' + esc(q[1]) + '</span><span class="balab">A</span></button>' +
+      '<button class="balbtn' + (BAL.picked === 'b' ? ' picked' : '') + '" data-act="balPick" data-side="b">' +
+      '<span class="bale">' + q[4] + '</span><span class="balv">' + esc(q[2]) + '</span><span class="balab">B</span></button>' +
+      '</div>';
+    if (BAL.picked) {
+      h += '<div class="balrec">' + esc(who) + '는 <b>' + esc(BAL.picked === 'a' ? q[1] : q[2]) +
+        '</b>을(를) 골랐어요! ' + (balWho === 'mom' ? '🩵' : '🎉') + '</div>' +
+        '<button class="btn primary wide" data-act="balNext">다음 질문 ▶</button>';
+    } else {
+      h += '<div class="balrec">지금은 <b>' + esc(who) + '</b> 차례예요' +
+        ' <button class="gback" data-act="balWho" data-who="' + (balWho === 'mom' ? 'child' : 'mom') + '">' +
+        (balWho === 'mom' ? '아이 차례' : '엄마 차례') + '</button></div>';
+    }
+    var picks = state.balancePicks.slice(-5).reverse();
+    if (picks.length) {
+      h += '<div class="balrec"><b>우리가 고른 것</b><ul>';
+      for (var i = 0; i < picks.length; i++) {
+        var p = picks[i];
+        var pq = BALANCE[p.q];
+        if (!pq) { continue; }
+        h += '<li>' + esc(p.who === 'mom' ? '엄마' : state.childName) + ' · ' +
+          esc(p.side === 'a' ? pq[1] : pq[2]) + '</li>';
+      }
+      h += '</ul></div>';
+    }
+    return h;
+  }
+
+  function balPick(side) {
+    var qi = BAL.i % BALANCE.length;
+    if (!BALANCE[qi]) { return; }
+    BAL.picked = (side === 'b') ? 'b' : 'a';
+    state.balancePicks.push({ q: qi, side: BAL.picked, who: balWho, at: Date.now() });
+    if (state.balancePicks.length > 40) { state.balancePicks = state.balancePicks.slice(state.balancePicks.length - 40); }
+    save();
+    render();
+    renderGame();
+  }
+  function balNext() {
+    BAL.i = (BAL.i + 1) % BALANCE.length;
+    BAL.picked = null;
+    renderGame();
+  }
+
+  function renderGame() {
+    var v = $('gameView');
+    if (!v) { return; }
+    if (QUIZ.view === 'word') { v.innerHTML = wordViewHtml(); }
+    else if (QUIZ.view === 'done') { v.innerHTML = wordDoneHtml(); }
+    else if (QUIZ.view === 'balance') { v.innerHTML = balViewHtml(); }
+    else { v.innerHTML = menuHtml(); }
+  }
+
   /* ================= 이벤트 ================= */
   function handleAct(act, el) {
     switch (act) {
@@ -2024,6 +3042,27 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
       case 'saveRoom': saveRoom(); break;
       case 'loadSample': loadSampleData(); break;
       case 'resetAll': resetAll(); break;
+      case 'openDeco': openDeco(); break;
+      case 'decoClose': closeDeco(); break;
+      case 'decoMode': setDecoMode(el.getAttribute('data-mode')); break;
+      case 'decoCat': setDecoCat(el.getAttribute('data-cat')); break;
+      case 'decoPick': decoPick(el.getAttribute('data-kind'), el.getAttribute('data-val')); break;
+      case 'decoBuy': confirmBuy(); break;
+      case 'decoBuyCancel': buyAsk = null; renderBuyBar(); break;
+      case 'decoReset': decoReset(); break;
+      case 'openGame': openGame(); break;
+      case 'gameClose': closeGame(); break;
+      case 'gameMenu': gameMenu(); break;
+      case 'wordStart': wordStart(); break;
+      case 'wordPick': wordPick(el.getAttribute('data-idx')); break;
+      case 'wordNext': wordNext(); break;
+      case 'wordSpeak':
+        speak(QUIZ.qs[QUIZ.i] ? QUIZ.qs[QUIZ.i].en : '');
+        break;
+      case 'balOpen': QUIZ.view = 'balance'; BAL.picked = null; renderGame(); break;
+      case 'balPick': balPick(el.getAttribute('data-side')); break;
+      case 'balNext': balNext(); break;
+      case 'balWho': balWho = (el.getAttribute('data-who') === 'mom') ? 'mom' : 'child'; renderGame(); break;
     }
   }
 
