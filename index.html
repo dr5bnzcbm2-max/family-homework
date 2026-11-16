@@ -501,7 +501,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
         <div class="secthead"><h2>설정</h2></div>
         <label class="lbl" for="nameInput">아이 이름</label>
         <div class="addrow">
-          <input id="nameInput" type="text" maxlength="12" placeholder="예) 소율" autocomplete="off">
+          <input id="nameInput" type="text" maxlength="12" placeholder="예) 또르치" autocomplete="off">
           <button class="btn primary addbtn" data-act="saveName">저장</button>
         </div>
         <div class="row2 top">
@@ -657,7 +657,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
     s = isObj(s) ? s : {};
     var out = {};
     var nm = (typeof s.childName === 'string') ? s.childName.trim() : '';
-    out.childName = nm ? nm.slice(0, 12) : '소율';
+    out.childName = nm ? nm.slice(0, 12) : '또르치';
 
     out.items = [];
     var arr = Array.isArray(s.items) ? s.items : [];
@@ -704,7 +704,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
       sc.push({ id: uid(), day: rows[i][0], time: rows[i][1], title: rows[i][2], place: rows[i][3] });
     }
     return normalize({
-      childName: '소율',
+      childName: '또르치',
       items: sampleItems(),
       schedule: sc,
       stickers: 0, tickets: 0, totalStickers: 0, celebrated: ''
