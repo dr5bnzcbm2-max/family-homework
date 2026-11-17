@@ -269,6 +269,30 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
 .cmtdel:active{background:#E9F4FF;color:#2B78AD}
 .cmtempty{font-size:13.5px;color:var(--sub);margin:2px 2px 4px;line-height:1.5}
 
+/* ---------- 새 소식 안내 ---------- */
+.news{
+  position:fixed;left:0;right:0;top:0;z-index:65;display:flex;justify-content:center;
+  padding:calc(8px + env(safe-area-inset-top)) 12px 8px;pointer-events:none;
+}
+.news[hidden]{display:none}
+.news-in{
+  pointer-events:auto;width:100%;max-width:496px;
+  background:linear-gradient(160deg,#EAF7FF 0%,#F8FDFF 55%,#E5F4FF 100%);
+  border:2px solid #B7E1F9;border-radius:22px;padding:12px 14px 12px;
+  box-shadow:0 16px 32px rgba(44,128,184,.24);animation:newsIn .3s cubic-bezier(.2,.9,.2,1);
+}
+@keyframes newsIn{from{transform:translateY(-14px);opacity:0}to{transform:none;opacity:1}}
+.news-head{display:flex;align-items:center;gap:7px;margin-bottom:8px}
+.news-head b{font-size:15px;font-weight:900;color:#2B78AD;letter-spacing:-.2px}
+.news-cnt{font-size:11.5px;font-weight:900;color:#4F87A8;background:#fff;border:1.5px solid #CDE8F7;border-radius:99px;padding:2px 9px}
+.news-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;max-height:154px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.news-list li{
+  font-size:14px;font-weight:800;color:#3E5264;line-height:1.4;word-break:break-word;
+  background:rgba(255,255,255,.9);border:1.5px solid #D8EEFA;border-radius:14px;padding:7px 10px;
+}
+.news-list li.cmt{color:#4A3F6B;border-color:#DFE3FB;background:rgba(255,255,255,.96)}
+.news .btn.news-ok{min-height:44px;margin-top:10px;border-radius:15px;font-size:15px}
+
 /* ---------- 탭바 ---------- */
 .tabbar{
   position:fixed;left:0;right:0;bottom:0;z-index:40;display:flex;gap:4px;
@@ -569,6 +593,14 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
   <svg class="deco d-heart2" viewBox="0 0 40 40"><use href="#ch-heart" xlink:href="#ch-heart"/></svg>
   <svg class="deco d-spark1" viewBox="0 0 40 40"><use href="#ch-spark" xlink:href="#ch-spark"/></svg>
   <svg class="deco d-spark2" viewBox="0 0 40 40"><use href="#ch-spark" xlink:href="#ch-spark"/></svg>
+</div>
+
+<div class="news" id="newsBanner" role="status" aria-live="polite" hidden>
+  <div class="news-in">
+    <div class="news-head"><b>🔔 새 소식이에요</b><span class="news-cnt" id="newsCnt"></span></div>
+    <ul class="news-list" id="newsList"></ul>
+    <button class="btn primary wide news-ok" data-act="newsOk">확인했어요</button>
+  </div>
 </div>
 
 <div class="app">
@@ -1266,6 +1298,8 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
     SYNC.applying = true;
     var next = normalize(remote);
     next.updatedAt = Math.max(0, Number(remote.updatedAt) || 0);
+    /* 상대 폰에서 새로 생긴 완료·한마디를 도착한 상태와 비교해 모은다 */
+    noticeFrom(next);
     var focusId = '';
     var caret = null;
     try {
@@ -1314,6 +1348,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
     if (!incoming) {
       /* 방이 비어 있으면 지금 데이터를 올려 처음 상태 만들기 (같은 방에서 반복 전송하지 않음) */
       if (!SYNC.seedPushed) { SYNC.seedPushed = true; queuePush(0); }
+      if (!SEEN.ready) { baselineSeen(state); }
       return;
     }
     var remoteAt = Math.max(0, Number(incoming.updatedAt) || 0);
@@ -1328,6 +1363,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
       if (stateSig(normalize(incoming)) !== stateSig(state)) { applyRemote(incoming); }
     } else if (Date.now() - (SYNC.correctAt || 0) > 5000) {
       /* 원격이 더 오래됐으면 내 최신 내용으로 다시 맞춘다 (연속 전송 방지) */
+      if (!SEEN.ready) { baselineSeen(state); }
       SYNC.correctAt = Date.now();
       queuePush(0);
     }
@@ -1470,6 +1506,16 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
   function startSync() {
     SYNC.room = detectRoom();
     SYNC.seedPushed = false;
+    /* 이 가족 방에 대해 마지막으로 확인한 상태를 불러온다 */
+    seenReload();
+    if (SEEN.ready) {
+      pruneSeen(state);
+      addNews(newsEvents(state));
+      saveSeen();
+    }
+    if (seenTimer) { clearTimeout(seenTimer); }
+    /* 연결이 아주 느릴 때를 대비한 안전판: 첫 연결이면 지금 데이터를 기준으로 삼는다 */
+    seenTimer = setTimeout(function () { seenTimer = null; if (!SEEN.ready) { baselineSeen(state); } }, 8000);
     if (!hasFetch()) { setSyncStatus('offline'); return; }
     setSyncStatus('syncing');
     doPull(false);
@@ -1500,10 +1546,197 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
     SYNC.seedPushed = false;
     SYNC.correctAt = 0;
     closeStream();
+    /* 방이 바뀌면 그 방의 '확인한 상태'도 새로 읽는다 */
+    seenReload();
     setSyncStatus(hasFetch() ? 'syncing' : 'offline');
     if (hasFetch()) { doPull(false); connect(); startPolling(); }
     renderShare();
     toast(same ? ('가족 방 "' + code + '"에 다시 연결했어요 🩵') : ('가족 방 "' + code + '"로 연결했어요 🩵'));
+  }
+
+  /* ============ 새 소식 (상대 폰의 완료·한마디) ============ */
+  /* 기기마다 마지막으로 확인한 상태를 localStorage 에 남겨 두고, 그 뒤에 생긴
+     상대의 완료·코멘트만 안내창으로 알려 준다. 처음 연결할 때는 전부 '확인됨'으로 시작. */
+  var SEEN_KEY = 'familyHomeworkApp.seen.v1';
+  var SEEN = { ready: false, done: {}, cmts: {}, at: 0 };
+  var NEWS = { pending: [] };
+  var seenTimer = null;
+
+  function seenKey() {
+    return SEEN_KEY + '.' + (sanitizeRoom(SYNC.room) || 'room');
+  }
+  function seenEmpty() { return { ready: false, done: {}, cmts: {}, at: 0 }; }
+  function normSeen(o) {
+    var out = seenEmpty();
+    if (!isObj(o)) { return out; }
+    out.ready = !!o.ready;
+    out.at = Math.max(0, Number(o.at) || 0);
+    var k;
+    if (isObj(o.done)) { for (k in o.done) { if (o.done.hasOwnProperty(k) && o.done[k]) { out.done[k] = 1; } } }
+    if (isObj(o.cmts)) { for (k in o.cmts) { if (o.cmts.hasOwnProperty(k) && o.cmts[k]) { out.cmts[k] = 1; } } }
+    return out;
+  }
+  function loadSeen() {
+    try {
+      var raw = window.localStorage.getItem(seenKey());
+      if (raw) { return normSeen(JSON.parse(raw)); }
+    } catch (e) { }
+    return seenEmpty();
+  }
+  function saveSeen() {
+    SEEN.at = Date.now();
+    try { window.localStorage.setItem(seenKey(), JSON.stringify(SEEN)); } catch (e) { }
+  }
+  function seenReload() {
+    SEEN = loadSeen();
+    NEWS.pending = [];
+    renderNews();
+  }
+
+  /* 지금 상태의 완료 항목·코멘트를 모두 '확인됨'으로 (이미 사라진 항목은 정리) */
+  function markAllSeen(s) {
+    var d = {}, i;
+    for (i = 0; i < s.items.length; i++) {
+      var it = s.items[i];
+      if (it.done) { d[it.id] = 1; } else { delete SEEN.done[it.id]; }
+    }
+    SEEN.done = d;
+    var c = {}, ks = [];
+    for (i = 0; i < s.comments.length; i++) {
+      var cid = s.comments[i].id;
+      c[cid] = 1;
+      ks.push(cid);
+    }
+    /* 오래된 코멘트 기록은 300개까지만 */
+    var all = [];
+    for (var k in SEEN.cmts) { if (SEEN.cmts.hasOwnProperty(k) && !c.hasOwnProperty(k)) { all.push(k); } }
+    for (i = 0; i < all.length; i++) { c[all[i]] = 1; ks.push(all[i]); }
+    while (ks.length > 300) { delete c[ks.shift()]; }
+    SEEN.cmts = c;
+  }
+
+  /* 떠난 항목·코멘트의 기록만 정리 (남은 항목의 '완료' 기록은 유지) */
+  function pruneSeen(s) {
+    var d = {}, c = {}, i;
+    for (i = 0; i < s.items.length; i++) {
+      var it = s.items[i];
+      if (!it.done) { delete SEEN.done[it.id]; }
+      else if (SEEN.done[it.id]) { d[it.id] = 1; }
+    }
+    SEEN.done = d;
+    for (i = 0; i < s.comments.length; i++) {
+      var cid = s.comments[i].id;
+      if (SEEN.cmts[cid]) { c[cid] = 1; }
+    }
+    SEEN.cmts = c;
+  }
+
+  function baselineSeen(s) {
+    var src = s || state;
+    SEEN.ready = true;
+    SEEN.done = {};
+    SEEN.cmts = {};
+    markAllSeen(src);
+    NEWS.pending = [];
+    saveSeen();
+    renderNews();
+  }
+
+  /* 이 상태에서 아직 확인하지 않은 완료·코멘트 목록 */
+  function newsEvents(s) {
+    var out = [], i;
+    var t = todayKey();
+    for (i = 0; i < s.items.length; i++) {
+      var it = s.items[i];
+      if (it.done && !SEEN.done[it.id]) {
+        out.push({ key: 'done:' + it.id, kind: 'done', id: it.id, text: '✅ ' + it.text + ' 완료!' + (it.date === t ? '' : ' (' + it.date + ')') });
+      }
+    }
+    var cs = s.comments.slice();
+    cs.sort(function (a, b) { return (a.at || 0) - (b.at || 0); });
+    for (i = 0; i < cs.length; i++) {
+      var c = cs[i];
+      if (!SEEN.cmts[c.id]) {
+        var who = (c.author === 'mom') ? '엄마' : (s.childName || state.childName);
+        out.push({ key: 'cmt:' + c.id, kind: 'cmt', id: c.id, text: '💬 ' + who + ': "' + c.text + '"' });
+      }
+    }
+    return out;
+  }
+
+  function addNews(list) {
+    var added = 0;
+    for (var i = 0; i < list.length; i++) {
+      var ev = list[i], dup = false;
+      for (var j = 0; j < NEWS.pending.length; j++) { if (NEWS.pending[j].key === ev.key) { dup = true; break; } }
+      if (dup) { continue; }
+      NEWS.pending.push(ev);
+      added++;
+    }
+    if (NEWS.pending.length > 6) { NEWS.pending = NEWS.pending.slice(NEWS.pending.length - 6); }
+    if (added) { renderNews(); }
+  }
+
+  function dropNews(key) {
+    var hit = false;
+    for (var i = NEWS.pending.length - 1; i >= 0; i--) {
+      if (NEWS.pending[i].key === key) { NEWS.pending.splice(i, 1); hit = true; }
+    }
+    if (hit) { renderNews(); }
+  }
+
+  /* 다른 폰의 상태를 받아들일 때: 처음이면 기준만 조용히 잡고, 아니면 새 소식으로 모은다 */
+  function noticeFrom(s) {
+    if (!SEEN.ready) { baselineSeen(s); return; }
+    pruneSeen(s);
+    addNews(newsEvents(s));
+    saveSeen();
+  }
+
+  function markItemSeen(id, done) {
+    if (!SEEN.ready) { return; }
+    if (done) { SEEN.done[id] = 1; } else { delete SEEN.done[id]; }
+    dropNews('done:' + id);
+    saveSeen();
+  }
+  function markCommentSeen(id) {
+    if (!SEEN.ready) { return; }
+    SEEN.cmts[id] = 1;
+    dropNews('cmt:' + id);
+    saveSeen();
+  }
+
+  function renderNews() {
+    var wrap = $('newsBanner'), list = $('newsList'), cnt = $('newsCnt');
+    if (!wrap) { return; }
+    var items = NEWS.pending;
+    if (!items.length) {
+      wrap.hidden = true;
+      wrap.classList.remove('show');
+      if (list) { list.innerHTML = ''; }
+      return;
+    }
+    var html = '';
+    for (var i = 0; i < items.length; i++) {
+      html += '<li class="' + (items[i].kind === 'cmt' ? 'cmt' : 'done') + '">' + esc(items[i].text) + '</li>';
+    }
+    if (list) { list.innerHTML = html; }
+    if (cnt) { cnt.textContent = items.length + '개'; }
+    wrap.hidden = false;
+    wrap.classList.add('show');
+  }
+
+  function newsOk() {
+    for (var i = 0; i < NEWS.pending.length; i++) {
+      var ev = NEWS.pending[i];
+      if (ev.kind === 'done') { SEEN.done[ev.id] = 1; } else { SEEN.cmts[ev.id] = 1; }
+    }
+    NEWS.pending = [];
+    SEEN.ready = true;
+    if (state) { markAllSeen(state); }
+    saveSeen();
+    renderNews();
+    toast('새 소식을 확인했어요 👍');
   }
 
   /* ================= 조회 도우미 ================= */
@@ -2100,6 +2333,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
     renderWeek();
     renderStickers();
     if (cur === 'share') { renderShare(); }
+    renderNews();
   }
 
   /* ================= 탭 ================= */
@@ -2286,6 +2520,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
     }
 
     save();
+    markItemSeen(it.id, it.done);
     render();
 
     if (cards.length) {
@@ -2314,6 +2549,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
     undoBuf = { kind: 'del', item: state.items[idx], index: idx };
     state.items.splice(idx, 1);
     save();
+    dropNews('done:' + id);
     render();
     toast('지웠어요', '되돌리기', 'undo');
   }
@@ -2328,8 +2564,9 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
       if (el && el.focus) { el.focus(); }
       return;
     }
+    var cid = uid();
     state.comments.push({
-      id: uid(),
+      id: cid,
       author: (draft.who === 'mom') ? 'mom' : 'child',
       text: text.slice(0, 80),
       at: Date.now()
@@ -2338,6 +2575,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
     draft.cmt = '';
     if (el) { el.value = ''; }
     save();
+    markCommentSeen(cid);
     render();
     var el2 = $('newComment');
     if (el2 && el2.focus) { el2.focus(); }
@@ -2353,6 +2591,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
     undoBuf = { kind: 'cmt', comment: state.comments[idx], index: idx };
     state.comments.splice(idx, 1);
     save();
+    dropNews('cmt:' + id);
     render();
     toast('한마디를 지웠어요', '되돌리기', 'undo');
   }
@@ -2534,6 +2773,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
     state = normalize(o);
     carryOver(state);
     save();
+    baselineSeen(state);
     render();
     setTab('today');
     toast('백업을 불러왔어요 ✅', '되돌리기', 'undo');
@@ -2561,6 +2801,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
     state.stickerDate = '';
     state.stickerTicket = '';
     save();
+    baselineSeen(state);
     render();
     renderShare();
     toast('샘플 숙제와 일정을 넣었어요 🎒', '되돌리기', 'undo');
@@ -2584,6 +2825,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
     undoBuf = { kind: 'import', prev: state };
     state = normalize({ childName: state.childName });
     save();
+    baselineSeen(state);
     render();
     renderShare();
     toast('처음 상태로 되돌렸어요', '되돌리기', 'undo');
@@ -3040,6 +3282,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
       case 'saveName': saveName(); break;
       case 'syncNow': syncNow(); break;
       case 'saveRoom': saveRoom(); break;
+      case 'newsOk': newsOk(); break;
       case 'loadSample': loadSampleData(); break;
       case 'resetAll': resetAll(); break;
       case 'openDeco': openDeco(); break;
