@@ -750,12 +750,12 @@ function drawPattern(g, pid, r, R){
   }
 
   // 공통 음영 (입체감)
-  var rim = g.createRadialGradient(-r*0.30,-r*0.36, r*0.08, 0, 0, r*1.16);
-  rim.addColorStop(0,'rgba(255,255,255,0.16)');
-  rim.addColorStop(0.42,'rgba(255,255,255,0.0)');
-  rim.addColorStop(0.72,'rgba(36,12,60,0.16)');
-  rim.addColorStop(0.94,'rgba(24,7,42,0.5)');
-  rim.addColorStop(1,'rgba(20,6,36,0.62)');
+  // 빛 방향 음영 (거리 기반이 아니라 방향 기반 → 귀 같은 돌출부가 검게 죽지 않음)
+  var rim = g.createLinearGradient(-r*0.95,-r*1.05, r*0.85, r*1.05);
+  rim.addColorStop(0,'rgba(255,255,255,0.20)');
+  rim.addColorStop(0.34,'rgba(255,255,255,0.02)');
+  rim.addColorStop(0.66,'rgba(30,10,50,0.06)');
+  rim.addColorStop(1,'rgba(24,7,42,0.34)');
   g.fillStyle=rim; g.fillRect(-S/2,-S/2,S,S);
 }
 
@@ -962,8 +962,10 @@ function paintBall(g, b, r){
   var bg2 = g.createLinearGradient(0, r*0.25, 0, r*1.05);
   bg2.addColorStop(0,'rgba(255,255,255,0)'); bg2.addColorStop(1,'rgba(255,255,255,0.14)');
   g.fillStyle=bg2; g.fillRect(-r*1.4, 0, r*2.8, r*1.4);
-  var rim2 = g.createRadialGradient(0,0, r*0.55, 0, 0, r*1.02);
-  rim2.addColorStop(0,'rgba(0,0,0,0)'); rim2.addColorStop(1,'rgba(22,6,34,0.38)');
+  var rim2 = g.createRadialGradient(0,0, r*0.5, 0, 0, r*1.42);
+  rim2.addColorStop(0,'rgba(0,0,0,0)');
+  rim2.addColorStop(0.62,'rgba(22,6,34,0.10)');
+  rim2.addColorStop(1,'rgba(22,6,34,0.40)');
   g.fillStyle=rim2; g.fillRect(-r*1.4,-r*1.4, r*2.8, r*2.8);
   g.restore();
 }
