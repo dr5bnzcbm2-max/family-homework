@@ -1140,6 +1140,14 @@ function breakChip(lx, ly){
   spawnShards(hx, hy, hrr*R, 3 + Math.floor(Math.random()*3));
   ball.removedN += h.r*h.r*0.78;
   Sfx.shard();
+  for(var di=0; di<4; di++){
+    var da2 = Math.random()*TAU, dv = rnd(40,160);
+    parts.push({
+      x: BALL.x + hx + Math.cos(da2)*hrr*R, y: BALL.y + hy + Math.sin(da2)*hrr*R,
+      vx: Math.cos(da2)*dv, vy: Math.sin(da2)*dv - 60,
+      life: 0.9, col: 'rgba(255,255,255,0.9)', s: rnd(1.5,3.2), rot: Math.random()*TAU, vr: rnd(-8,8)
+    });
+  }
   shake = Math.min(9, shake + 1.1);
   updateHud();
   if(!ball.recorded && coverage() >= 0.5) completeBall();
@@ -1359,8 +1367,16 @@ function drawBackground(now){
   fg.addColorStop(0,'rgba(120,80,200,0)');
   fg.addColorStop(1,'rgba(120,80,200,0.16)');
   g.fillStyle = fg; g.fillRect(0, H*0.7, W, H*0.3);
-  g.strokeStyle = 'rgba(255,255,255,0.07)'; g.lineWidth = 1;
-  g.beginPath(); g.moveTo(12, H-20); g.lineTo(W-12, H-20); g.stroke();
+  // 왁스 조각이 쌓이는 쟁반
+  var fy = H-24;
+  var tg = g.createRadialGradient(W/2, fy, 4, W/2, fy, W*0.58);
+  tg.addColorStop(0,'rgba(255,255,255,0.10)');
+  tg.addColorStop(0.55,'rgba(170,130,255,0.07)');
+  tg.addColorStop(1,'rgba(170,130,255,0)');
+  g.fillStyle = tg;
+  g.beginPath(); g.ellipse(W/2, fy, W*0.47, 28, 0, 0, TAU); g.fill();
+  g.strokeStyle = 'rgba(255,255,255,0.13)'; g.lineWidth = 1;
+  g.beginPath(); g.ellipse(W/2, fy, W*0.47, 28, 0, Math.PI*1.03, Math.PI*1.97); g.stroke();
 
   // 둥둥 먼지
   for(var i=0;i<dust.length;i++){
