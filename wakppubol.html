@@ -781,18 +781,41 @@ function shellFor(b, r){
   if(b._shell && b._shell.r === r) return b._shell;
   var s = buildShell(b, r);
   b._shell = s;
+  if(b.cracks && b.cracks.length){ for(var c=0;c<b.cracks.length;c++) drawCrackOnShell(b, b.cracks[c]); }
   if(b.holes && b.holes.length){ for(var i=0;i<b.holes.length;i++) chipOut(b, b.holes[i]); }
   return s;
+}
+function drawCrackOnShell(b, c){
+  var s = b._shell; if(!s) return;
+  var g = s.cv.getContext('2d');
+  g.save();
+  g.setTransform(1,0,0,1,0,0);
+  g.translate(s.size/2, s.size/2);
+  shapePath(g, b.shape, s.r*0.999);
+  g.clip();
+  g.beginPath();
+  for(var i=0;i<c.pts.length;i++){
+    var x=c.pts[i][0]*s.r, y=c.pts[i][1]*s.r;
+    if(i===0) g.moveTo(x,y); else g.lineTo(x,y);
+  }
+  g.lineCap='round'; g.lineJoin='round';
+  g.strokeStyle='rgba(255,255,255,0.5)';
+  g.lineWidth=Math.max(0.6, c.w*s.r*1.5);
+  g.stroke();
+  g.strokeStyle='rgba(32,10,46,0.38)';
+  g.lineWidth=Math.max(0.45, c.w*s.r*0.9);
+  g.stroke();
+  g.restore();
 }
 function chipOut(b, h){
   var s = b._shell; if(!s) return;
   var g = s.cv.getContext('2d');
   var cx = s.size/2 + h.x*s.r, cy = s.size/2 + h.y*s.r, rad = h.r*s.r;
   var R2 = mulberry32((h.seed||7)>>>0);
-  var pts = [], n = 11;
+  var pts = [], n = 8;
   for(var i=0;i<n;i++){
-    var a = i/n*TAU + R2()*0.26;
-    var rr = rad*(0.62 + R2()*0.58);
+    var a = i/n*TAU + R2()*0.4;
+    var rr = rad*(0.45 + R2()*0.85);
     pts.push([cx + Math.cos(a)*rr, cy + Math.sin(a)*rr]);
   }
   // 1) 껍질 깨내기
@@ -914,24 +937,6 @@ function paintBall(g, b, r){
       sg2.addColorStop(1,'rgba(18,5,28,0.22)');
       g.fillStyle=sg2;
       g.beginPath(); g.arc(hx,hy,hr,0,TAU); g.fill();
-    }
-    g.restore();
-  }
-
-  // ---- 금 간 선
-  if(b.cracks && b.cracks.length){
-    g.save();
-    shapePath(g, b.shape, r*0.995); g.clip();
-    g.lineCap='round'; g.lineJoin='round';
-    for(var ci=0;ci<b.cracks.length;ci++){
-      var c=b.cracks[ci];
-      g.beginPath();
-      for(var pi=0;pi<c.pts.length;pi++){
-        var px=c.pts[pi][0]*r, py=c.pts[pi][1]*r;
-        if(pi===0) g.moveTo(px,py); else g.lineTo(px,py);
-      }
-      g.strokeStyle='rgba(255,255,255,0.42)'; g.lineWidth=Math.max(0.5, c.w*r*1.5); g.stroke();
-      g.strokeStyle='rgba(34,14,50,0.34)'; g.lineWidth=Math.max(0.4, c.w*r*0.85); g.stroke();
     }
     g.restore();
   }
@@ -1106,9 +1111,13 @@ function addCracks(lx, ly, power){
       len -= 0.06;
       if(pts.length > 9) break;
     }
-    if(pts.length>2) ball.cracks.push({pts:pts, w:0.004+Math.random()*0.006});
+    if(pts.length>2){
+      var cr = {pts:pts, w:0.004+Math.random()*0.006};
+      ball.cracks.push(cr);
+      if(ball._shell) drawCrackOnShell(ball, cr);
+    }
   }
-  if(ball.cracks.length > 42) ball.cracks.splice(0, ball.cracks.length-42);
+  if(ball.cracks.length > 34) ball.cracks.splice(0, ball.cracks.length-34);
 }
 var _hitCv = null, _hitG = null;
 function pointInBall(x, y, pad){
