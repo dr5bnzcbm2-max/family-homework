@@ -799,11 +799,11 @@ function drawCrackOnShell(b, c){
     if(i===0) g.moveTo(x,y); else g.lineTo(x,y);
   }
   g.lineCap='round'; g.lineJoin='round';
-  g.strokeStyle='rgba(255,255,255,0.5)';
-  g.lineWidth=Math.max(0.6, c.w*s.r*1.5);
+  g.strokeStyle='rgba(255,255,255,0.55)';
+  g.lineWidth=Math.max(0.7, c.w*s.r*1.7);
   g.stroke();
-  g.strokeStyle='rgba(32,10,46,0.38)';
-  g.lineWidth=Math.max(0.45, c.w*s.r*0.9);
+  g.strokeStyle='rgba(30,9,44,0.46)';
+  g.lineWidth=Math.max(0.5, c.w*s.r*0.95);
   g.stroke();
   g.restore();
 }
@@ -1101,20 +1101,19 @@ function addCracks(lx, ly, power){
     var ang = Math.random()*TAU;
     var px = lx*0.9, py = ly*0.9;
     var pts = [[px/R, py/R]];
-    var len = 0.22 + Math.random()*0.45;
-    while(len > 0.04){
-      var step = R*(0.05+Math.random()*0.05);
-      ang += (Math.random()-0.5)*0.9;
+    var len = 0.24 + Math.random()*0.5;
+    while(len > 0.05){
+      var step = R*(0.07+Math.random()*0.06);
+      ang += (Math.random()-0.5)*1.15;
       px += Math.cos(ang)*step; py += Math.sin(ang)*step;
-      if(Math.hypot(px,py) > R*0.97) break;
+      if(Math.hypot(px,py) > R*0.96) break;
       pts.push([px/R, py/R]);
-      len -= 0.06;
-      if(pts.length > 9) break;
+      len -= 0.075;
+      if(pts.length > 7) break;
     }
     if(pts.length>2){
-      var cr = {pts:pts, w:0.004+Math.random()*0.006};
-      ball.cracks.push(cr);
-      if(ball._shell) drawCrackOnShell(ball, cr);
+      ball.cracks.push({pts:pts, w:0.004+Math.random()*0.006});
+      ball._shell = null; // 다음 렌더에서 껍질을 다시 그려 금 간 선이 깨진 자리 위로 나오지 않게
     }
   }
   if(ball.cracks.length > 34) ball.cracks.splice(0, ball.cracks.length-34);
@@ -1144,6 +1143,7 @@ function breakChip(lx, ly){
   }
   var h = {x:hx/R, y:hy/R, r:hrr, seed:(Math.random()*1e9)>>>0};
   ball.holes.push(h);
+  shellFor(ball, BALL.r);
   chipOut(ball, h);
   addCracks(hx, hy, 0.4);
   spawnShards(hx, hy, hrr*R, 3 + Math.floor(Math.random()*3));
