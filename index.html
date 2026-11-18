@@ -1233,13 +1233,12 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
     lastDay = t;
     var carried = carryOver(state);
     var added = ensureDaily(t);
-    if (!added && !carried) { return 0; }
-    save();
+    if (added || carried) { save(); }
     render();
     if (cur === 'share') { renderShare(); }
     if (added) {
       toast('새 날이에요! 오늘 할 일 ' + added + '개를 준비했어요 📚');
-    } else {
+    } else if (carried) {
       toast('못 끝낸 숙제 ' + carried + '개를 오늘로 가져왔어요 🎒');
     }
     return added;
