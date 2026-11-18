@@ -1002,14 +1002,17 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
       [6, '', '가족 나들이', '']
     ];
   }
+  /* 매일 새로 생기는 기본 할 일 (하루 4가지) — 날짜별로 같은 id 를 써서 두 폰이 동시에 열어도 겹치지 않는다 */
+  var DAILY_TASKS = ['구몬', '받아쓰기', '리딩', '리틀테일즈'];
+  function dailyItems(t) {
+    var out = [];
+    for (var i = 0; i < DAILY_TASKS.length; i++) {
+      out.push({ id: 'daily-' + t + '-' + i, text: DAILY_TASKS[i], type: '숙제', done: false, date: t });
+    }
+    return out;
+  }
   function sampleItems() {
-    var t = todayKey();
-    return [
-      { id: uid(), text: '구몬', type: '숙제', done: false, date: t },
-      { id: uid(), text: '받아쓰기', type: '숙제', done: false, date: t },
-      { id: uid(), text: '리딩', type: '숙제', done: false, date: t },
-      { id: uid(), text: '리틀테일즈', type: '숙제', done: false, date: t }
-    ];
+    return dailyItems(todayKey());
   }
 
   /* ================= 상태 정규화 ================= */
@@ -1128,6 +1131,9 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
     }
     if (out.balancePicks.length > 40) { out.balancePicks = out.balancePicks.slice(out.balancePicks.length - 40); }
 
+    /* 오늘 몫의 기본 할 일을 이미 채웠는지 (같은 날 다시 만들지 않기) */
+    out.dailySeededDate = isYmd(s.dailySeededDate) ? s.dailySeededDate : '';
+
     out.updatedAt = Math.max(0, Number(s.updatedAt) || 0);
     return out;
   }
@@ -1172,13 +1178,71 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
 
   /* 어제 이전의 못 끝낸 숙제를 오늘로 가져오기 */
   function carryOver(s) {
-    var t = todayKey(), n = 0;
-    for (var i = 0; i < s.items.length; i++) {
+    var t = todayKey(), n = 0, i;
+    /* 오늘 이미 같은 할 일이 있으면 어제 것을 또 넣지 않는다 */
+    var own = {};
+    for (i = 0; i < s.items.length; i++) {
+      if (s.items[i].date === t) { own[s.items[i].text] = 1; }
+    }
+    for (i = 0; i < s.items.length; i++) {
       var it = s.items[i];
-      if (!it.done && it.date < t) { it.date = t; it.carried = true; n++; }
+      if (it.done || !(it.date < t) || own[it.text]) { continue; }
+      it.date = t; it.carried = true; n++;
     }
     s.items = s.items.filter(function (x) { return !(x.done && dayDiff(t, x.date) > 30); });
     return n;
+  }
+
+  /* 오늘 몫의 기본 할 일(구몬·받아쓰기·리딩·리틀테일즈)이 아직 없으면 한 번만 채운다 */
+  function ensureDaily(t) {
+    t = t || todayKey();
+    if (state.dailySeededDate === t) { return 0; }
+    var i, it, have = {}, hasOwn = false;
+    for (i = 0; i < state.items.length; i++) {
+      it = state.items[i];
+      if (it.date !== t) { continue; }
+      if (!it.carried) { hasOwn = true; }
+      have[it.text] = 1;
+    }
+    /* 오늘 이미 손으로 넣은(또는 다른 폰이 넣은) 할 일이 있으면 새로 만들지 않는다 */
+    if (hasOwn) { state.dailySeededDate = t; return 0; }
+    var src = dailyItems(t), added = 0;
+    for (i = 0; i < src.length; i++) {
+      if (have[src[i].text]) { continue; } /* 어제 못 끝나 넘어온 같은 숙제는 그대로 쓴다 */
+      state.items.push(src[i]);
+      added++;
+    }
+    state.dailySeededDate = t;
+    return added;
+  }
+
+  /* 채운 게 있으면 저장 (push=true 면 가족 방으로도 전송) */
+  function fillToday(push) {
+    var added = ensureDaily(todayKey());
+    if (!added) { return 0; }
+    if (push) { save(); } else { persist(); }
+    return added;
+  }
+
+  var lastDay = '';
+  /* 앱을 켜 둔 채 날짜가 바뀌면 새 날 몫의 할 일을 준비한다 */
+  function dayRollover() {
+    var t = todayKey();
+    if (!lastDay) { lastDay = t; return 0; }
+    if (t === lastDay) { return 0; }
+    lastDay = t;
+    var carried = carryOver(state);
+    var added = ensureDaily(t);
+    if (!added && !carried) { return 0; }
+    save();
+    render();
+    if (cur === 'share') { renderShare(); }
+    if (added) {
+      toast('새 날이에요! 오늘 할 일 ' + added + '개를 준비했어요 📚');
+    } else {
+      toast('못 끝낸 숙제 ' + carried + '개를 오늘로 가져왔어요 🎒');
+    }
+    return added;
   }
 
   /* 로컬에만 저장 (updatedAt 을 건드리지 않음) */
@@ -1307,6 +1371,8 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
       if (focusId === 'newItem' || focusId === 'newComment') { caret = document.activeElement.selectionStart; }
     } catch (e) { focusId = ''; caret = null; }
     state = next;
+    /* 다른 폰 상태에 오늘 몫 기본 할 일이 아직 없으면 여기서 채워 다시 전송한다 */
+    fillToday(true);
     persist();
     render();
     if (cur === 'share') { renderShare(); }
@@ -1485,6 +1551,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
       try {
         if (typeof document !== 'undefined' && document && document.visibilityState === 'hidden') { return; }
       } catch (e) { }
+      dayRollover();
       var open = !!(SYNC.es && SYNC.es.readyState === 1);
       var gap = Date.now() - (SYNC.pullAt || 0);
       if (open && gap < 25000) { return; }
@@ -1498,6 +1565,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
     try {
       if (typeof document !== 'undefined' && document && document.visibilityState === 'hidden') { return; }
     } catch (e) { }
+    dayRollover();
     if (!hasFetch()) { return; }
     if (!SYNC.es) { connect(); }
     doPull(false);
@@ -3382,12 +3450,20 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
   /* ================= 시작 ================= */
   function init() {
     bind();
+    lastDay = todayKey();
+    var dailyAdded = fillToday(false);
     render();
     setTab('today');
     persist();
     startSync();
     if (carriedIn > 0) {
       setTimeout(function () { toast('어제 못 끝낸 숙제 ' + carriedIn + '개를 오늘로 가져왔어요 🎒'); }, 700);
+    } else if (dailyAdded > 0) {
+      setTimeout(function () { toast('오늘 할 일 ' + dailyAdded + '개를 새로 준비했어요 📚'); }, 700);
+    }
+    /* 앱을 켜 둔 채 자정을 넘기는 경우를 위해 1분마다 날짜를 확인 */
+    if (typeof setInterval === 'function') {
+      setInterval(function () { dayRollover(); }, 60000);
     }
     if (!storageOK) {
       setTimeout(function () { toast('이 화면에서는 자동 저장이 안 될 수 있어요. 공유 탭에서 백업해 주세요'); }, 1400);
