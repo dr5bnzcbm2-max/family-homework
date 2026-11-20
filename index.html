@@ -225,6 +225,55 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
 .srow .place{flex:0 0 auto;font-size:11.5px;font-weight:800;color:#748CA0;max-width:38%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .daycard .empty{margin-top:8px;font-size:13px}
 
+/* ---------- 한 달 달력 ---------- */
+.calcard{padding:14px 12px 12px}
+.calhead{display:flex;align-items:center;gap:6px;margin:0 2px 10px}
+.calhead .caltitle{flex:1;text-align:center;font-size:15.5px;font-weight:900;letter-spacing:-.3px;color:#2B78AD}
+.calnav{flex:0 0 auto;width:36px;height:36px;border-radius:13px;border:2px solid #DDEEFB;background:#fff;font-size:16px;font-weight:900;color:#5B7C93;display:grid;place-items:center;padding:0}
+.calnav:active{transform:scale(.94)}
+.calnow{flex:0 0 auto;min-height:36px;border-radius:13px;border:2px solid #DDEEFB;background:var(--blue-1);font-size:11.5px;font-weight:900;color:#2B78AD;padding:0 10px}
+.calsum{display:flex;flex-wrap:wrap;gap:4px 10px;margin:0 2px 9px;font-size:11.5px;font-weight:900;color:#7A8FA3}
+.calsum b{color:#2B78AD;font-size:12.5px}
+.calweek{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin:0 0 3px}
+.calwd{text-align:center;font-size:11px;font-weight:900;color:#93A9BB;letter-spacing:-.2px;padding:2px 0}
+.calwd.sat{color:#7FAFDE}
+.calwd.sun{color:#E3A0A0}
+.calgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.calnone{min-height:54px}
+.calcell{position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;min-height:54px;padding:4px 1px 3px;border:2px solid transparent;border-radius:15px;background:transparent;font:inherit;cursor:pointer}
+.calcell:active{transform:scale(.96)}
+.calcell .calnum{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:900;color:#5B7C93;letter-spacing:-.3px}
+.calcell .calmark{font-size:9.5px;font-weight:900;line-height:1;letter-spacing:-.2px;color:#9DAFC0;min-height:10px}
+.calcell.full{background:linear-gradient(180deg,#F1FAFF,#DFF3FE);border-color:#BEE6FA;box-shadow:0 5px 12px rgba(122,166,198,.12)}
+.calcell.full .calnum{background:linear-gradient(180deg,#8FD5F5,#5AB6EA);color:#fff;box-shadow:0 3px 8px rgba(90,175,225,.34)}
+.calcell.full .calmark{color:#2B78AD;font-size:11px}
+.calcell.part .calnum{background:#FFF7E2;color:#A47C21;border:1.5px solid #FFE7AF}
+.calcell.part .calmark{color:#C0912C}
+.calcell.miss .calnum{background:#F1F5F9;color:#8B9CAB;border:1.5px solid #E7EEF4}
+.calcell.miss .calmark{color:#B9C6D2}
+.calcell.plan{border-style:dashed;border-color:#DCEAF6}
+.calcell.plan .calnum{color:#7E93A6;background:#FBFDFF;border:1.5px dashed #DCEAF6}
+.calcell.today .calnum{box-shadow:0 0 0 2.5px #FFCE7A}
+.calcell.today.full .calnum{box-shadow:0 0 0 2.5px #FFCE7A,0 3px 8px rgba(90,175,225,.34)}
+.calcell.sel{box-shadow:0 0 0 2px #7CC6EE}
+.callegend{display:flex;flex-wrap:wrap;gap:6px 12px;margin:11px 2px 0;font-size:11px;font-weight:800;color:#8FA4B5}
+.callegend .lg{display:inline-flex;align-items:center;gap:5px}
+.callegend .lg i{width:9px;height:9px;border-radius:50%;display:block}
+.callegend .lg i.f{background:linear-gradient(180deg,#8FD5F5,#5AB6EA)}
+.callegend .lg i.p{background:#FFD98A;border:1.5px solid #F0C568}
+.callegend .lg i.m{background:#E4EBF2;border:1.5px solid #D6E0E9}
+.callegend .lg i.t{background:#fff;border:2px solid #FFCE7A}
+.calday .cdtop{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 9px}
+.calday .cdtop h3{margin:0;font-size:15.5px;font-weight:900;letter-spacing:-.3px}
+.calday .bar{margin-top:0}
+.calday .cfoot{margin:9px 0 0;font-size:12.5px;font-weight:800;color:#7A8FA3;line-height:1.45}
+.callist{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-direction:column;gap:6px}
+.callist li{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:800;color:#3E5264;background:#FBFDFF;border:1.5px solid #E8F3FC;border-radius:14px;padding:8px 11px}
+.callist li.ok{color:#2B78AD;background:#F2FBFF;border-color:#DDF0FB}
+.callist li .cm{font-size:12.5px;flex:0 0 auto}
+.callist li .t{flex:1;min-width:0;word-break:break-word}
+.callist li .tag{margin-left:auto;flex:0 0 auto}
+
 /* ---------- 스티커 ---------- */
 .boardhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:8px}
 .boardhead h2{font-size:16px;font-weight:900;margin:0}
@@ -658,6 +707,12 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
       <div id="weekBody"></div>
     </section>
 
+    <!-- 한 달 달력 -->
+    <section id="view-cal" class="view" hidden>
+      <h2 class="vtitle">📅 한 달 달력</h2>
+      <div id="calBody"></div>
+    </section>
+
     <!-- 스티커 -->
     <section id="view-stickers" class="view" hidden>
       <h2 class="vtitle">⭐ 칭찬 스티커 판</h2>
@@ -730,6 +785,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
 
 <nav class="tabbar" aria-label="탭">
   <button class="tabbtn on" data-act="tab" data-tab="today"><span class="ic">🌤️</span>오늘</button>
+  <button class="tabbtn" data-act="tab" data-tab="cal"><span class="ic">📅</span>달력</button>
   <button class="tabbtn" data-act="tab" data-tab="week"><span class="ic">🗓️</span>일정</button>
   <button class="tabbtn" data-act="tab" data-tab="stickers"><span class="ic">⭐</span>스티커</button>
   <button class="tabbtn" data-act="tab" data-tab="share"><span class="ic">💌</span>공유</button>
@@ -1131,6 +1187,27 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
     }
     if (out.balancePicks.length > 40) { out.balancePicks = out.balancePicks.slice(out.balancePicks.length - 40); }
 
+    /* 날짜별 완료 기록 (한 달 달력) — 할 일 목록이 정리돼도 그날 기록은 남긴다 */
+    out.history = {};
+    var hh = isObj(s.history) ? s.history : {};
+    for (var hk in hh) {
+      if (!hh.hasOwnProperty(hk) || !isYmd(hk)) { continue; }
+      var he = hh[hk];
+      if (!isObj(he)) { continue; }
+      var htot = Math.floor(Number(he.total) || 0);
+      if (!(htot > 0)) { continue; }
+      htot = Math.min(htot, 200);
+      var hdone = Math.max(0, Math.min(htot, Math.floor(Number(he.done) || 0)));
+      var hlist = [];
+      if (Array.isArray(he.list)) {
+        for (var hl = 0; hl < he.list.length && hlist.length < 12; hl++) {
+          if (typeof he.list[hl] === 'string' && he.list[hl].trim()) { hlist.push(he.list[hl].trim().slice(0, 24)); }
+        }
+      }
+      out.history[hk] = { done: hdone, total: htot, list: hlist };
+    }
+    pruneHistory(out);
+
     /* 오늘 몫의 기본 할 일을 이미 채웠는지 (같은 날 다시 만들지 않기) */
     out.dailySeededDate = isYmd(s.dailySeededDate) ? s.dailySeededDate : '';
 
@@ -1165,10 +1242,76 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
     return sampleState();
   }
 
+  /* ================= 날짜별 기록 (한 달 달력) ================= */
+  /* 그날 할 일을 다 끝냈는지(100%)를 날짜별로 남긴다.
+     items 는 오래된 완료 항목이 정리되고 못 끝낸 항목은 다음 날로 넘어가므로,
+     달력이 그날의 기록을 잃지 않도록 history 에 따로 모아 둔다. */
+  var HIST_DAYS = 180;
+  function pruneHistory(s) {
+    if (!isObj(s.history)) { s.history = {}; return; }
+    var keys = [];
+    for (var k in s.history) { if (s.history.hasOwnProperty(k)) { keys.push(k); } }
+    if (keys.length <= HIST_DAYS) { return; }
+    keys.sort();
+    var drop = keys.slice(0, keys.length - HIST_DAYS);
+    for (var i = 0; i < drop.length; i++) { delete s.history[drop[i]]; }
+  }
+  function dayLive(d) {
+    var out = { done: 0, total: 0, items: [] };
+    for (var i = 0; i < state.items.length; i++) {
+      var it = state.items[i];
+      if (it.date !== d) { continue; }
+      out.items.push(it);
+      out.total++;
+      if (it.done) { out.done++; }
+    }
+    return out;
+  }
+  /* 지금 할 일 목록을 날짜별 기록에 반영 (기록은 줄어들지 않게 큰 쪽을 남긴다) */
+  function recordHistory(s) {
+    s = s || state;
+    if (!isObj(s.history)) { s.history = {}; }
+    var map = {}, d, i;
+    for (i = 0; i < s.items.length; i++) {
+      var it = s.items[i];
+      if (!isYmd(it.date)) { continue; }
+      if (!map[it.date]) { map[it.date] = { done: 0, total: 0, list: [] }; }
+      var e = map[it.date];
+      e.total++;
+      if (it.done) { e.done++; }
+      if (e.list.length < 12) { e.list.push(String(it.text).slice(0, 24)); }
+    }
+    for (d in map) {
+      if (!map.hasOwnProperty(d)) { continue; }
+      var cur = map[d], prev = s.history[d];
+      if (!prev || cur.total >= prev.total) {
+        s.history[d] = { done: cur.done, total: cur.total, list: cur.list };
+      }
+    }
+    pruneHistory(s);
+    return s.history;
+  }
+  /* 그날의 현황: 할 일이 남아 있으면 그것을, 없으면 남겨 둔 기록을 쓴다 */
+  function dayStat(d) {
+    if (!isYmd(d)) { return null; }
+    var live = dayLive(d);
+    var h = (state.history && state.history[d]) ? state.history[d] : null;
+    if (live.total && (!h || live.total >= h.total)) {
+      return { done: live.done, total: live.total, items: live.items, list: null };
+    }
+    if (h) { return { done: h.done, total: h.total, items: null, list: (h.list || []) }; }
+    if (live.total) { return { done: live.done, total: live.total, items: live.items, list: null }; }
+    return null;
+  }
+
   /* ================= 상태 ================= */
   var state = loadState();
+  /* 달력 기록: 앱을 열자마자 지난 날짜들의 기록을 먼저 남긴다
+     (못 끝낸 항목이 오늘로 넘어가기 전에) */
+  recordHistory(state);
   var carriedIn = carryOver(state);
   var cur = 'today';
+  var CAL = { y: 0, m: 0, sel: '' };
   var draft = { text: '', type: '숙제', cmt: '', who: 'child' };
   var undoBuf = null;
   var sheetState = { id: null, day: 0 };
@@ -1246,6 +1389,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
 
   /* 로컬에만 저장 (updatedAt 을 건드리지 않음) */
   function persist() {
+    recordHistory(state);
     try { store.set(JSON.stringify(state)); } catch (e) { storageOK = false; }
   }
 
@@ -1352,6 +1496,14 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
       String(s.miniGameBonusDate || '') + '/' + (s.unlockedItems || []).join('+'));
     var bps = s.balancePicks || [];
     for (i = 0; i < bps.length; i++) { out.push('b:' + bps[i].q + ',' + bps[i].side + ',' + bps[i].who); }
+    out.push('d:' + String(s.dailySeededDate || ''));
+    var hks = [];
+    for (var hk2 in (s.history || {})) { if (s.history.hasOwnProperty(hk2)) { hks.push(hk2); } }
+    hks.sort();
+    for (i = 0; i < hks.length; i++) {
+      var hv = s.history[hks[i]];
+      out.push('h:' + hks[i] + '=' + hv.done + '/' + hv.total);
+    }
     return out.join('~');
   }
 
@@ -2272,6 +2424,162 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
     body.innerHTML = html;
   }
 
+  /* ---- 한 달 달력 ---- */
+  var CAL_DOW = ['월', '화', '수', '목', '금', '토', '일'];
+  function calEnsure() {
+    if (CAL.y) { return; }
+    var d = new Date();
+    CAL.y = d.getFullYear();
+    CAL.m = d.getMonth();
+    CAL.sel = todayKey();
+  }
+  function calShift(n) {
+    calEnsure();
+    var d = new Date(CAL.y, CAL.m + n, 1);
+    CAL.y = d.getFullYear();
+    CAL.m = d.getMonth();
+    renderCal();
+  }
+  function calGoToday() {
+    var d = new Date();
+    CAL.y = d.getFullYear();
+    CAL.m = d.getMonth();
+    CAL.sel = todayKey();
+    renderCal();
+  }
+  function calPick(d) {
+    calEnsure();
+    if (!isYmd(d)) { return; }
+    CAL.sel = d;
+    var dt = parseYmd(d);
+    if (dt.getFullYear() !== CAL.y || dt.getMonth() !== CAL.m) {
+      CAL.y = dt.getFullYear();
+      CAL.m = dt.getMonth();
+    }
+    renderCal();
+  }
+  function calCellHtml(d, t) {
+    var st = dayStat(d);
+    var cls = 'calcell';
+    var mark = '';
+    var label = '';
+    if (st) {
+      if (d > t) {
+        cls += ' plan';
+        mark = st.total + '개';
+        label = '예정 ' + st.total + '개';
+      } else if (st.done >= st.total) {
+        cls += ' full';
+        mark = '✓';
+        label = st.total + '개 모두 완료';
+      } else if (st.done > 0) {
+        cls += ' part';
+        mark = st.done + '/' + st.total;
+        label = st.done + '/' + st.total + ' 완료';
+      } else {
+        cls += ' miss';
+        mark = st.done + '/' + st.total;
+        label = '아직 ' + st.total + '개 남음';
+      }
+    }
+    if (d === t) { cls += ' today'; }
+    if (d === CAL.sel) { cls += ' sel'; }
+    var dt = parseYmd(d);
+    var aria = (dt.getMonth() + 1) + '월 ' + dt.getDate() + '일 ' + DAYS[(dt.getDay() + 6) % 7] + '요일' + (label ? ', ' + label : '');
+    return '<button class="' + cls + '" data-act="calDay" data-date="' + esc(d) + '" aria-label="' + esc(aria) + '" aria-pressed="' + (d === CAL.sel ? 'true' : 'false') + '">' +
+      '<span class="calnum">' + dt.getDate() + '</span>' +
+      '<span class="calmark">' + esc(mark) + '</span>' +
+      '</button>';
+  }
+  function calDayHtml(d) {
+    if (!isYmd(d)) { return ''; }
+    var dt = parseYmd(d);
+    var t = todayKey();
+    var st = dayStat(d);
+    var title = (dt.getMonth() + 1) + '월 ' + dt.getDate() + '일 (' + DAYS[(dt.getDay() + 6) % 7] + ')';
+    var html = '<div class="card calday"><div class="cdtop"><h3>' + title + '</h3>' +
+      (st ? '<span class="cnt">' + st.done + '/' + st.total + ' 완료</span>' : '<span class="cnt">기록 없음</span>') +
+      '</div>';
+    if (!st) {
+      return html + '<p class="empty" style="margin:0">이날은 남긴 할 일이 없어요 🌿</p></div>';
+    }
+    var pc = st.total ? Math.round(st.done / st.total * 100) : 0;
+    html += '<div class="bar"><i style="width:' + pc + '%"></i></div>';
+    var foot;
+    if (pc >= 100) { foot = '모두 끝낸 날이에요! 정말 대단해요 🏆'; }
+    else if (d > t) { foot = '아직 오지 않은 날이에요. 이날 할 일 ' + st.total + '개' + (st.total ? '가 기다리고 있어요 📚' : '예정'); }
+    else if (st.done === 0) { foot = '이날은 아직 하나도 못 했어요. ' + st.total + '개 남았어요 🌱'; }
+    else { foot = st.done + '개 완료, ' + (st.total - st.done) + '개 남았어요 🌱'; }
+    html += '<p class="cfoot">' + foot + '</p>';
+    var li = '', i;
+    if (st.items && st.items.length) {
+      for (i = 0; i < st.items.length; i++) {
+        var it = st.items[i];
+        li += '<li class="' + (it.done ? 'ok' : '') + '"><span class="cm">' + (it.done ? '✅' : '⬜️') + '</span>' +
+          '<span class="t">' + esc(it.text) + '</span>' +
+          (it.carried ? '<span class="tag">어제꺼</span>' : '') + '</li>';
+      }
+    } else if (st.list && st.list.length) {
+      for (i = 0; i < st.list.length; i++) {
+        li += '<li><span class="cm">📄</span><span class="t">' + esc(st.list[i]) + '</span></li>';
+      }
+    }
+    if (li) { html += '<ul class="callist">' + li + '</ul>'; }
+    return html + '</div>';
+  }
+  function renderCal() {
+    var body = $('calBody');
+    if (!body) { return; }
+    calEnsure();
+    var t = todayKey();
+    var first = new Date(CAL.y, CAL.m, 1);
+    var lead = (first.getDay() + 6) % 7;
+    var days = new Date(CAL.y, CAL.m + 1, 0).getDate();
+
+    /* 이번 달(오늘까지) 요약 */
+    var full = 0, part = 0, none = 0, i;
+    for (i = 1; i <= days; i++) {
+      var ds = ymd(new Date(CAL.y, CAL.m, i));
+      if (ds > t) { continue; }
+      var st = dayStat(ds);
+      if (!st) { continue; }
+      if (st.done >= st.total) { full++; }
+      else if (st.done > 0) { part++; }
+      else { none++; }
+    }
+    var html = '<div class="card calcard">';
+    html += '<div class="calhead">' +
+      '<button class="calnav" data-act="calPrev" aria-label="이전 달">‹</button>' +
+      '<div class="caltitle">' + CAL.y + '년 ' + (CAL.m + 1) + '월</div>' +
+      '<button class="calnav" data-act="calNext" aria-label="다음 달">›</button>' +
+      '<button class="calnow" data-act="calToday">오늘</button>' +
+      '</div>';
+    html += '<div class="calsum"><span>✅ 다 끝낸 날 <b>' + full + '</b>일</span>' +
+      '<span>🟡 남긴 날 <b>' + part + '</b>일</span>' +
+      '<span>⬜️ 못 한 날 <b>' + none + '</b>일</span></div>';
+    html += '<div class="calweek">';
+    for (i = 0; i < 7; i++) {
+      html += '<div class="calwd' + (i === 5 ? ' sat' : (i === 6 ? ' sun' : '')) + '">' + CAL_DOW[i] + '</div>';
+    }
+    html += '</div><div class="calgrid">';
+    for (i = 0; i < lead; i++) { html += '<span class="calnone"></span>'; }
+    for (i = 1; i <= days; i++) {
+      html += calCellHtml(ymd(new Date(CAL.y, CAL.m, i)), t);
+    }
+    var tail = (lead + days) % 7;
+    if (tail) { for (i = 0; i < 7 - tail; i++) { html += '<span class="calnone"></span>'; } }
+    html += '</div>';
+    html += '<div class="callegend">' +
+      '<span class="lg"><i class="f"></i>모두 완료</span>' +
+      '<span class="lg"><i class="p"></i>일부만 완료</span>' +
+      '<span class="lg"><i class="m"></i>못 한 날</span>' +
+      '<span class="lg"><i class="t"></i>오늘</span>' +
+      '</div>';
+    html += '</div>';
+    html += calDayHtml(CAL.sel);
+    body.innerHTML = html;
+  }
+
   function renderStickers() {
     var body = $('stickerBody');
     if (!body) { return; }
@@ -2398,13 +2706,14 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
     renderRoom();
     renderToday();
     renderWeek();
+    renderCal();
     renderStickers();
     if (cur === 'share') { renderShare(); }
     renderNews();
   }
 
   /* ================= 탭 ================= */
-  var TABS = ['today', 'week', 'stickers', 'share'];
+  var TABS = ['today', 'cal', 'week', 'stickers', 'share'];
   function setTab(name) {
     cur = name;
     for (var i = 0; i < TABS.length; i++) {
@@ -3348,6 +3657,10 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue-2);box-shadow:0 
       case 'importPaste': if ($('jsonBox')) { importFromText($('jsonBox').value); } break;
       case 'saveName': saveName(); break;
       case 'syncNow': syncNow(); break;
+      case 'calPrev': calShift(-1); break;
+      case 'calNext': calShift(1); break;
+      case 'calToday': calGoToday(); break;
+      case 'calDay': calPick(el.getAttribute('data-date')); break;
       case 'saveRoom': saveRoom(); break;
       case 'newsOk': newsOk(); break;
       case 'loadSample': loadSampleData(); break;
